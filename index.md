@@ -84,17 +84,6 @@ Os bootcamps incluem:
 
 ---
 
-# Navegação
-
-Os módulos práticos podem ser acessados diretamente:
-
-- Transcriptomics (RNA-seq)
-- ATAC-seq
-- CUT&RUN
-- Single-cell RNA-seq
-
----
-
 # Organização
 
 Universidade de São Paulo (USP)
