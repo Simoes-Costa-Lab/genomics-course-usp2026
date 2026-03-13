@@ -7,7 +7,12 @@ baseurl: /genomics-course-usp2026
 
 aux_links: # remove if you don't want this link to appear on your pages
   Template Repository: https://github.com/Simoes-Costa-Lab/genomics-course-usp2026/
-  
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
 
 
 
