@@ -2,7 +2,8 @@ title: Genomics of Gene Regulation
 description: Resources for Genomics of Gene Regulation Course (QBQ5908) at the University of São Paulo June/July 2026
 theme: just-the-docs
 
-url: https://simoes-costa-lab.github.io/genomics-course-usp2026/
+url: https://simoes-costa-lab.github.io/
+baseurl: /genomics-course-usp2026
 
 aux_links: # remove if you don't want this link to appear on your pages
   Template Repository: https://github.com/Simoes-Costa-Lab/genomics-course-usp2026/
