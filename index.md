@@ -1,31 +1,103 @@
 ---
-title: Home
+title: Início
 layout: home
+nav_order: 1
+description: "Curso intensivo de bioinformática com módulos de RNA-seq, ATAC-seq, CUT&RUN e single-cell."
 ---
 
-This is a *bare-minimum* template to create a Jekyll site that uses the [Just the Docs] theme. You can easily set the created site to be published on [GitHub Pages] – the [README] file explains how to do that, along with other details.
 
-If [Jekyll] is installed on your computer, you can also build and preview the created site *locally*. This lets you test changes before committing them, and avoids waiting for GitHub Pages.[^1] And you will be able to deploy your local build to a different platform than GitHub Pages.
+# Curso de Genômica para Regulação Gênica — USP 2026
 
-More specifically, the created site:
+Bem-vindos ao material do curso intensivo realizado na **Universidade de São Paulo (USP)**.  
+Este curso combina **aulas teóricas sobre regulação gênica** com **bootcamps práticos de análise de dados genômicos**, incluindo transcriptômica, epigenômica e single-cell.
 
-- uses a gem-based approach, i.e. uses a `Gemfile` and loads the `just-the-docs` gem
-- uses the [GitHub Pages / Actions workflow] to build and publish the site on GitHub Pages
+O material deste site foi organizado para servir como **apoio durante o curso e como apostila de referência posterior**.
 
-Other than that, you're free to customize sites that you create with this template, however you like. You can easily change the versions of `just-the-docs` and Jekyll it uses, as well as adding further plugins.
+---
 
-[Browse our documentation][Just the Docs] to learn more about how to use this theme.
+# Estrutura do curso
 
-To get started with creating a site, simply:
+O curso está organizado em **módulos teóricos pela manhã** e **bootcamps práticos de análise de dados à tarde**, seguidos de desenvolvimento de projetos.
 
-1. click "[use this template]" to create a GitHub repository
-2. go to Settings > Pages > Build and deployment > Source, and select GitHub Actions
+Os bootcamps incluem:
 
-If you want to maintain your docs in the `docs` directory of an existing project repo, see [Hosting your docs from an existing project repo](https://github.com/just-the-docs/just-the-docs-template/blob/main/README.md#hosting-your-docs-from-an-existing-project-repo) in the template README.
+- Transcriptomics (RNA-seq)
+- ATAC-seq
+- CUT&RUN
+- Single-cell RNA-seq
 
-----
+---
 
-[^1]: [It can take up to 10 minutes for changes to your site to publish after you push the changes to GitHub](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/creating-a-github-pages-site-with-jekyll#creating-your-site).
+# Programação
+
+## Day 2 — Course start
+
+| Time | Activity |
+|-----|-----|
+| 9:00 – 10:30 | Lecture 01: *An introduction to gene regulation* |
+| 11:00 – 12:00 | Lecture 02: *Analysis of gene expression and gene targeting* |
+| 2:00 – 4:00 | Data analysis bootcamp: **Transcriptomics** |
+| 4:00 – 5:00 | Project development |
+
+---
+
+## Day 3
+
+| Time | Activity |
+|-----|-----|
+| 9:00 – 10:30 | Lecture 03: *Gene regulatory networks* |
+| 11:00 – 12:00 | Lecture 04: *Epigenomic regulation and chromatin architecture* |
+| 2:00 – 4:00 | Data analysis bootcamp: **ATAC-seq** |
+| 4:00 – 5:00 | Project development |
+
+---
+
+## Day 4
+
+| Time | Activity |
+|-----|-----|
+| 9:00 – 10:30 | Lecture 05: *Cis-regulatory logic in gene expression* |
+| 11:00 – 12:00 | Lecture 06: *Enhancer analysis and targeting* |
+| 2:00 – 4:00 | Data analysis bootcamp: **CUT&RUN** |
+| 4:00 – 5:00 | Project development |
+
+---
+
+## Day 5
+
+| Time | Activity |
+|-----|-----|
+| 9:00 – 10:30 | Science Talk: *Genome-wide reconstruction of gene expression patterns in the avian gastrula* |
+| 11:00 – 12:00 | Science Talk: *Metabolism and gene regulation* |
+| 2:00 – 4:00 | Data analysis bootcamp: **scRNA-seq** |
+| 4:00 – 5:00 | Project development |
+
+---
+
+## Day 6
+
+| Time | Activity |
+|-----|-----|
+| 9:00 – 10:30 | Science Talk: *Cis-regulatory control of neural crest development* |
+| 11:00 – 12:00 | Student project presentations |
+| 2:00 – 4:00 | Student project presentations and final discussion |
+
+---
+
+# Navegação
+
+Os módulos práticos podem ser acessados diretamente:
+
+- Transcriptomics (RNA-seq)
+- ATAC-seq
+- CUT&RUN
+- Single-cell RNA-seq
+
+---
+
+# Organização
+
+Universidade de São Paulo (USP)
 
 [Just the Docs]: https://just-the-docs.github.io/just-the-docs/
 [GitHub Pages]: https://docs.github.com/en/pages
