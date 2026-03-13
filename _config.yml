@@ -1,11 +1,12 @@
-title: Just the Docs Template
-description: A starter template for a Jeykll site using the Just the Docs theme!
+title: Genomics of Gene Regulation USP 2026
+description: Resources for Genomics of Gene Regulation Course (QBQ5908) at the University of São Paulo June/July 2026
 theme: just-the-docs
 
-url: https://just-the-docs.github.io
+url: https://simoes-costa-lab.github.io/genomics-course-usp2026/
 
-aux_links:
-  Template Repository: https://github.com/just-the-docs/just-the-docs-template
+aux_links: # remove if you don't want this link to appear on your pages
+  Template Repository: https://github.com/Simoes-Costa-Lab/genomics-course-usp2026/
+  
 
-plugins:
-  - jekyll-default-layout
+
+
