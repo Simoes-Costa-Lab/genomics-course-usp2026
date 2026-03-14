@@ -21,11 +21,10 @@ Após a conclusão desse módulo, os alunos devem ser capazes de:
 ## Estrutura do módulo
 
 Esse módulo inclui:
-
-- **Teoria:** princípios biológicos e computacionais de RNA-seq
-- **Sessão prática:** análise guiada de dados
-- **Exercícios:** atividades para fixação e desenvolvimento do projeto
-- **Referências:** recursos adicionais e recomendações de leitura
+- [Teoria](./theory.md): princípios biológicos e computacionais de RNA-seq
+- [Sessão prática](./practical.md): análise guiada de dados
+- [Exercícios](./exercises.md): atividades para fixação e desenvolvimento do projeto
+- [Referências](./references.md): recursos adicionais e recomendações de leitura
 
 ## Conteúdo
 
@@ -36,9 +35,4 @@ Esse módulo inclui:
 - análises exploratórias e expressão diferencial
 - interpretação de resultados
 
-## Páginas do módulo
 
-- [Theory](./theory)
-- [Practical session](./practical)
-- [Exercises](./exercises)
-- [References](./references)
