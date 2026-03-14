@@ -1,6 +1,6 @@
 ---
 title: Sessão prática
-parent: rnaseq
+parent: Transcriptômica (RNA-seq)
 nav_order: 2
 ---
 
