@@ -1,6 +1,6 @@
 ---
 title: Teoria
-parent: scrnaseq
+parent: Single-cell RNA-seq
 nav_order: 1
 ---
 
