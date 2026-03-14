@@ -6,7 +6,7 @@ has_children: true
 
 # Single‑cell RNA‑seq
 
-Este módulo introduz a análise de **dados de transcriptômica de célula única (scRNA‑seq)**, uma abordagem que permite estudar **heterogeneidade celular em tecidos complexos**.
+Este módulo introduz a análise de **dados de transcriptômica de single-cell (scRNA‑seq)**, uma abordagem que permite estudar **heterogeneidade celular em tecidos complexos**.
 
 A análise de scRNA‑seq permite identificar **tipos celulares, trajetórias de diferenciação e programas regulatórios**.
 
@@ -21,7 +21,7 @@ Ao final deste módulo, os participantes deverão ser capazes de:
 
 ## Estrutura do módulo
 
-- [Teoria](./theory) – fundamentos da transcriptômica de célula única  
+- [Teoria](./theory) – fundamentos da transcriptômica de single-cell  
 - [Sessão prática](./practical) – análise exploratória de dados de scRNA‑seq  
 - [Exercícios](./exercises) – atividades para interpretação de resultados  
 - [Referências](./references) – recursos e leituras recomendadas
