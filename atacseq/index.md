@@ -21,10 +21,10 @@ Ao final deste módulo, os participantes deverão ser capazes de:
 
 ## Estrutura do módulo
 
-- [Teoria](./theory.md) – fundamentos de acessibilidade cromatínica e regulação gênica  
-- [Sessão prática](./practical.md) – exploração de dados de ATAC-seq  
-- [Exercícios](./exercises.md) – atividades práticas com os dados  
-- [Referências](./references.md) – leituras e recursos adicionais
+- [Teoria](./theory) – fundamentos de acessibilidade cromatínica e regulação gênica  
+- [Sessão prática](./practical) – exploração de dados de ATAC-seq  
+- [Exercícios](./exercises) – atividades práticas com os dados  
+- [Referências](./references) – leituras e recursos adicionais
 
 ## Conteúdo abordado
 
