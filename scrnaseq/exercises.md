@@ -1,6 +1,6 @@
 ---
 title: Exercícios
-parent: NOME_DO_MODULO
+parent: scrnaseq
 nav_order: 3
 ---
 
