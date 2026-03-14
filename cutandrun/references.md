@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: cutandrun
+parent: CUT&RUN
 nav_order: 4
 ---
 
