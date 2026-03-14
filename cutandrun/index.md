@@ -21,10 +21,10 @@ Ao final deste módulo, os participantes deverão ser capazes de:
 
 ## Estrutura do módulo
 
-- [Teoria](./theory.md) – princípios de regulação epigenética e ligação proteína‑DNA  
-- [Sessão prática](./practical.md) – análise guiada de dados de CUT&RUN  
-- [Exercícios](./exercises.md) – atividades para interpretação dos resultados  
-- [Referências](./references.md) – leituras adicionais
+- [Teoria](./theory) – princípios de regulação epigenética e ligação proteína‑DNA  
+- [Sessão prática](./practical) – análise guiada de dados de CUT&RUN  
+- [Exercícios](./exercises) – atividades para interpretação dos resultados  
+- [Referências](./references) – leituras adicionais
 
 ## Conteúdo abordado
 
