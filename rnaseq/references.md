@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: NOME_DO_MODULO
+parent: rnaseq
 nav_order: 4
 ---
 
