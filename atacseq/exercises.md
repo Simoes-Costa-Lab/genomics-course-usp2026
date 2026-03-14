@@ -1,6 +1,6 @@
 ---
 title: Exercícios
-parent: atacseq
+parent: ATAC-seq
 nav_order: 3
 ---
 
