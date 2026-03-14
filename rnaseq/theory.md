@@ -1,6 +1,6 @@
 ---
 title: Teoria
-parent: rnaseq
+parent: Transcriptômica (RNA-seq)
 nav_order: 1
 ---
 
