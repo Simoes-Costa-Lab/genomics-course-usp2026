@@ -1,6 +1,6 @@
 ---
 title: Teoria
-parent: cutandrun
+parent: CUT&RUN
 nav_order: 1
 ---
 
