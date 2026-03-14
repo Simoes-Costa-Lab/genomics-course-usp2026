@@ -1,6 +1,6 @@
 ---
 title: Exercícios
-parent: Single-cell RNA-seq
+parent: Single‑cell RNA-seq
 nav_order: 3
 ---
 
