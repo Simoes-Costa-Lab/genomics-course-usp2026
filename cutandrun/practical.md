@@ -1,6 +1,6 @@
 ---
 title: Sessão prática
-parent: cutandrun
+parent: CUT&RUN
 nav_order: 2
 ---
 
