@@ -1,6 +1,6 @@
 ---
 title: Teoria
-parent: NOME_DO_MODULO
+parent: cutandrun
 nav_order: 1
 ---
 
