@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: atacseq
+parent: ATAC-seq
 nav_order: 4
 ---
 
