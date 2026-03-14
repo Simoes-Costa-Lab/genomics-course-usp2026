@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: NOME_DO_MODULO
+parent: cutandrun
 nav_order: 4
 ---
 
