@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: NOME_DO_MODULO
+parent: atacseq
 nav_order: 4
 ---
 
