@@ -1,6 +1,6 @@
 ---
 title: Sessão prática
-parent: NOME_DO_MODULO
+parent: scrnaseq
 nav_order: 2
 ---
 
