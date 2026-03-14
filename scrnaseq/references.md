@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: Single-cell RNA-seq
+parent: Single‑cell RNA-seq
 nav_order: 4
 ---
 
