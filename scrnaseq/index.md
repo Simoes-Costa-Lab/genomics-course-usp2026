@@ -21,10 +21,10 @@ Ao final deste módulo, os participantes deverão ser capazes de:
 
 ## Estrutura do módulo
 
-- [Teoria](./theory.md) – fundamentos da transcriptômica de célula única  
-- [Sessão prática](./practical.md) – análise exploratória de dados de scRNA‑seq  
-- [Exercícios](./exercises.md) – atividades para interpretação de resultados  
-- [Referências](./references.md) – recursos e leituras recomendadas
+- [Teoria](./theory) – fundamentos da transcriptômica de célula única  
+- [Sessão prática](./practical) – análise exploratória de dados de scRNA‑seq  
+- [Exercícios](./exercises) – atividades para interpretação de resultados  
+- [Referências](./references) – recursos e leituras recomendadas
 
 ## Conteúdo abordado
 
