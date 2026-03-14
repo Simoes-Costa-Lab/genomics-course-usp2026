@@ -1,6 +1,6 @@
 ---
 title: Exercícios
-parent: rnaseq
+parent: Transcriptômica (RNA-seq)
 nav_order: 3
 ---
 
