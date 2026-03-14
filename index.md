@@ -21,10 +21,10 @@ O curso está organizado em **módulos teóricos pela manhã** e **bootcamps pr�
 
 Os bootcamps incluem:
 
-- [Transcriptomics (RNA-seq)](./rnaseq/index.md)
-- [ATAC-seq](./atacseq/index.md)
-- [CUT&RUN](./cutandrun/index.md)
-- [Single-cell RNA-seq](./scrnaseq/index.md)
+- [Transcriptomics (RNA-seq)](./rnaseq/index)
+- [ATAC-seq](./atacseq/index)
+- [CUT&RUN](./cutandrun/index)
+- [Single-cell RNA-seq](./scrnaseq/index)
 
 ---
 
