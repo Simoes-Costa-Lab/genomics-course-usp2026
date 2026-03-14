@@ -1,6 +1,6 @@
 ---
 title: Referências
-parent: rnaseq
+parent: Transcriptômica (RNA-seq)
 nav_order: 4
 ---
 
