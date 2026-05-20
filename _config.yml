@@ -14,5 +14,6 @@ defaults:
     values:
       layout: default
 
-
+mermaid:
+  version: "11.4.1"
 

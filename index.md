@@ -30,9 +30,9 @@ Os bootcamps incluem:
 
 # Programação
 
-## Day 2 — Course start
+## Dia 1 — Começo do Curso
 
-| Time | Activity |
+| Horário | Atividade |
 |-----|-----|
 | 9:00 – 10:30 | Lecture 01: *An introduction to gene regulation* |
 | 11:00 – 12:00 | Lecture 02: *Analysis of gene expression and gene targeting* |
@@ -41,9 +41,9 @@ Os bootcamps incluem:
 
 ---
 
-## Day 3
+## Dia 2
 
-| Time | Activity |
+| Horário | Atividade |
 |-----|-----|
 | 9:00 – 10:30 | Lecture 03: *Gene regulatory networks* |
 | 11:00 – 12:00 | Lecture 04: *Epigenomic regulation and chromatin architecture* |
@@ -52,9 +52,9 @@ Os bootcamps incluem:
 
 ---
 
-## Day 4
+## Dia 3
 
-| Time | Activity |
+| Horário | Atividade |
 |-----|-----|
 | 9:00 – 10:30 | Lecture 05: *Cis-regulatory logic in gene expression* |
 | 11:00 – 12:00 | Lecture 06: *Enhancer analysis and targeting* |
@@ -63,9 +63,9 @@ Os bootcamps incluem:
 
 ---
 
-## Day 5
+## Dia 4
 
-| Time | Activity |
+| Horário | Atividade |
 |-----|-----|
 | 9:00 – 10:30 | Science Talk: *Genome-wide reconstruction of gene expression patterns in the avian gastrula* |
 | 11:00 – 12:00 | Science Talk: *Metabolism and gene regulation* |
@@ -74,9 +74,9 @@ Os bootcamps incluem:
 
 ---
 
-## Day 6
+## Dia 5
 
-| Time | Activity |
+| Horário | Atividade |
 |-----|-----|
 | 9:00 – 10:30 | Science Talk: *Cis-regulatory control of neural crest development* |
 | 11:00 – 12:00 | Student project presentations |
