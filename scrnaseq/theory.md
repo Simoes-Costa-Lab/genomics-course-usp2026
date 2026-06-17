@@ -1,102 +1,101 @@
 ---
-title: Teoria
+title: Theory
 parent: Single‑cell RNA-seq
 nav_order: 1
 ---
 
+# Theory
 
-# Teoria
+## What is scRNA-seq?
 
-## O que é scRNA-seq?
+Single-cell RNA-seq (scRNA-seq) is a technique used to measure gene expression individually in thousands of cells simultaneously.
 
-Single-cell RNA-seq (scRNA-seq) é uma técnica utilizada para medir expressão gênica individualmente em milhares de células simultaneamente.
-
-Diferentemente do RNA-seq convencional (bulk RNA-seq), em que o sinal observado representa a média de uma população celular, scRNA-seq permite investigar heterogeneidade celular.
+Unlike conventional RNA-seq (bulk RNA-seq), where the observed signal represents the average expression across a cell population, scRNA-seq enables the investigation of cellular heterogeneity.
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/scrnaseq_overview.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 1. Visão geral da técnica de single-cell RNA-seq. Fonte: https://doi.org/10.1371/journal.ppat.1011898 </em>
+<em>Figure 1. Overview of the single-cell RNA-seq workflow. Source: https://doi.org/10.1371/journal.ppat.1011898 </em>
 </p>
 
 ---
 
-## Perguntas biológicas comuns
+## Common Biological Questions
 
-scRNA-seq pode ser utilizado para investigar:
+scRNA-seq can be used to investigate:
 
-- composição celular de tecidos
-- desenvolvimento embrionário
-- heterogeneidade tumoral
-- resposta celular a estímulos
-- trajetórias de diferenciação
-- estados celulares transitórios
+- tissue cellular composition
+- embryonic development
+- tumor heterogeneity
+- cellular responses to stimuli
+- differentiation trajectories
+- transient cellular states
 
 ---
 
 ## Bulk RNA-seq vs scRNA-seq
 
-No bulk RNA-seq, o sinal representa a média de milhares ou milhões de células.
+In bulk RNA-seq, the measured signal represents the average expression across thousands or millions of cells.
 
-Em contraste, scRNA-seq mede expressão gênica célula por célula.
+In contrast, scRNA-seq measures gene expression at the level of individual cells.
 
-### Comparação
+### Comparison
 
 | Bulk RNA-seq | scRNA-seq |
 |---|---|
-| média populacional | resolução celular |
-| menor ruído técnico | maior variabilidade |
-| menor custo | maior custo computacional |
-| expressão média | heterogeneidade celular |
+| population average | single-cell resolution |
+| lower technical noise | higher variability |
+| lower cost | higher computational cost |
+| average expression | cellular heterogeneity |
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/bulk_vs_singlecell.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 2. Comparação entre bulk RNA-seq e scRNA-seq. Fonte: https://www.completegenomics.com/methods/single-cell-rna-sequencing/ </em>
+<em>Figure 2. Comparison between bulk RNA-seq and scRNA-seq. Source: https://www.completegenomics.com/methods/single-cell-rna-sequencing/ </em>
 </p>
 
 ---
 
-## Isolamento celular e barcoding
+## Cell Isolation and Barcoding
 
-Em plataformas como 10x Genomics, células individuais são encapsuladas em droplets contendo beads com barcodes moleculares.
+In platforms such as 10x Genomics, individual cells are encapsulated into droplets containing beads with molecular barcodes.
 
-Cada molécula de RNA recebe:
+Each RNA molecule receives:
 
-- barcode celular
-- UMI (Unique Molecular Identifier)
+- a cell barcode
+- a UMI (Unique Molecular Identifier)
 
-### Barcodes celulares
+### Cell Barcodes
 
-Permitem identificar de qual célula cada read se originou.
+Cell barcodes allow identification of the cell from which each read originated.
 
 ### UMIs
 
-Permitem identificar moléculas únicas e reduzir viés de PCR.
+UMIs enable the identification of unique RNA molecules and help reduce PCR amplification bias.
 
 ---
 
-## Visão geral do workflow de scRNA-seq
+## Overview of the scRNA-seq Workflow
 
-### Fluxo geral
+### General Workflow
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/scrnaseq_workflow.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 2. Visão geral de um workflow típico de single cell RNA-Seq. </em>
+<em>Figure 3. Overview of a typical single-cell RNA-seq workflow.</em>
 </p>
 
 ---
 
-## Matriz célula-gene
+## Cell-by-Gene Matrix
 
-Após alinhamento e quantificação, os dados são organizados em uma matriz:
+After alignment and quantification, the data are organized into a matrix:
 
 | Gene | Cell_1 | Cell_2 | ... | Cell_n |
 |---|---|---|---|---|
@@ -104,182 +103,182 @@ Após alinhamento e quantificação, os dados são organizados em uma matriz:
 | PAX7 | 12 | 3 | ... | 0 |
 | TFAP2A | 0 | 8 | ... | 23 |
 
-Nessa matriz:
+In this matrix:
 
-- linhas representam genes
-- colunas representam células
-- valores representam abundância de RNA
-
----
-
-## Sparsity e dropouts
-
-Matrizes de scRNA-seq costumam ser extremamente esparsas.
-
-Muitos valores aparecem como zero devido a:
-
-- baixa captura de RNA
-- baixa profundidade
-- expressão muito baixa
-- limitações técnicas
-
-Esses zeros são frequentemente chamados de dropouts.
+- rows represent genes
+- columns represent cells
+- values represent RNA abundance
 
 ---
 
-## Controle de qualidade
+## Sparsity and Dropouts
 
-O controle de qualidade em scRNA-seq é realizado no nível de células individuais.
+scRNA-seq matrices are typically highly sparse.
 
-O objetivo é remover células de baixa qualidade antes da análise downstream.
+Many values appear as zero because of:
 
-### Métricas comuns
+- low RNA capture efficiency
+- limited sequencing depth
+- very low expression levels
+- technical limitations
 
-| Métrica | Interpretação |
+These zero values are commonly referred to as **dropouts**.
+
+---
+
+## Quality Control
+
+Quality control in scRNA-seq is performed at the level of individual cells.
+
+The goal is to remove low-quality cells before downstream analysis.
+
+### Common Metrics
+
+| Metric | Interpretation |
 |---|---|
-| número de genes detectados | complexidade celular |
-| número total de UMIs | profundidade |
-| porcentagem mitocondrial | integridade celular |
+| number of detected genes | cellular complexity |
+| total number of UMIs | sequencing depth |
+| percentage of mitochondrial transcripts | cellular integrity |
 
 ---
 
-## Células de baixa qualidade
+## Low-Quality Cells
 
-Células problemáticas frequentemente apresentam:
+Problematic cells frequently exhibit:
 
-- poucos genes detectados
-- baixa contagem total
-- alta porcentagem de genes mitocondriais
+- few detected genes
+- low total counts
+- high percentages of mitochondrial transcripts
 
-Essas células geralmente correspondem a:
+These cells often correspond to:
 
-- células mortas
+- dead cells
 - debris
-- droplets vazios
+- empty droplets
 
 ---
 
 ## Doublets
 
-Em alguns casos, duas células podem ser encapsuladas no mesmo droplet.
+In some cases, two cells may be encapsulated within the same droplet.
 
-Esses eventos são chamados de doublets.
+These events are known as **doublets**.
 
-Doublets podem gerar perfis artificiais misturando dois tipos celulares.
+Doublets can generate artificial expression profiles that combine signals from two different cell types.
 
-Ferramentas comuns incluem:
+Common tools include:
 
 - DoubletFinder
 - Scrublet
 
 ---
 
-## Normalização
+## Normalization
 
-Células individuais possuem diferentes profundidades de sequenciamento.
+Individual cells are sequenced at different depths.
 
-A normalização busca corrigir essas diferenças técnicas antes da comparação entre células.
+Normalization aims to correct these technical differences before comparing cells.
 
-### Objetivos da normalização
+### Goals of Normalization
 
-- corrigir diferenças de profundidade
-- estabilizar variância
-- permitir comparação entre células
+- correct sequencing depth differences
+- stabilize variance
+- enable comparisons across cells
 
-### Métodos comuns
+### Common Methods
 
-| Método | Ferramenta |
+| Method | Tool |
 |---|---|
 | LogNormalize | Seurat |
 | SCTransform | Seurat |
-| CPM normalization | abordagens clássicas |
+| CPM normalization | classical approaches |
 
 ---
 
-## Seleção de genes variáveis
+## Selection of Highly Variable Genes
 
-Nem todos os genes são igualmente informativos.
+Not all genes are equally informative.
 
-Genes altamente variáveis ajudam a identificar:
+Highly variable genes help identify:
 
-- diferenças celulares
-- estados biológicos
-- populações distintas
+- cellular differences
+- biological states
+- distinct populations
 
-Esses genes são frequentemente utilizados em análises downstream.
+These genes are often used in downstream analyses.
 
 ---
 
-## Redução de dimensionalidade
+## Dimensionality Reduction
 
-Experimentos de scRNA-seq possuem milhares de genes por célula.
+scRNA-seq experiments measure thousands of genes per cell.
 
-Técnicas de redução de dimensionalidade ajudam a resumir os dados.
+Dimensionality reduction techniques help summarize these high-dimensional datasets.
 
-### Métodos comuns
+### Common Methods
 
-| Método | Objetivo |
+| Method | Purpose |
 |---|---|
-| PCA | redução linear |
-| UMAP | visualização |
-| t-SNE | visualização local |
+| PCA | linear dimensionality reduction |
+| UMAP | visualization |
+| t-SNE | local structure visualization |
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/umap_example.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 3. Exemplo de projeção UMAP em scRNA-seq. Fonte: https://www.nature.com/articles/s41586-023-05869-0 </em>
+<em>Figure 4. Example of a UMAP projection from an scRNA-seq experiment. Source: https://www.nature.com/articles/s41586-023-05869-0 </em>
 </p>
 
 ---
 
-## Clustering celular
+## Cell Clustering
 
-Após a redução de dimensionalidade, células semelhantes podem ser agrupadas.
+After dimensionality reduction, similar cells can be grouped together.
 
-Esses agrupamentos frequentemente correspondem a:
+These clusters often correspond to:
 
-- tipos celulares
-- estados celulares
-- populações biológicas distintas
+- cell types
+- cell states
+- distinct biological populations
 
-Ferramentas comuns incluem:
+Common tools include:
 
 - Seurat
 - Scanpy
 
 ---
 
-## Anotação celular
+## Cell Annotation
 
-Após identificar os clusters, é necessário interpretar biologicamente cada população.
+After identifying clusters, each population must be interpreted biologically.
 
-Isso geralmente é feito utilizando:
+This is typically achieved using:
 
-- genes marcadores conhecidos
-- bancos de referência
-- literatura
+- known marker genes
+- reference datasets
+- published literature
 
 ---
 
-## Expressão diferencial
+## Differential Expression Analysis
 
-scRNA-seq também permite comparar expressão gênica entre:
+scRNA-seq also enables comparisons of gene expression between:
 
 - clusters
-- condições
-- estados celulares
+- experimental conditions
+- cellular states
 
 ---
 
-## Limitações de scRNA-seq
+## Limitations of scRNA-seq
 
-### Algumas limitações incluem:
+### Common limitations include:
 
-- alta sparsity
-- dropouts técnicos
-- maior ruído experimental
-- custo computacional elevado
-- perda de informação espacial
-- dissociação celular pode alterar expressão gênica
+- high sparsity
+- technical dropouts
+- increased experimental noise
+- substantial computational requirements
+- loss of spatial information
+- cell dissociation may alter gene expression

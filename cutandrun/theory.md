@@ -3,11 +3,6 @@ title: Teoria
 parent: CUT&RUN
 nav_order: 1
 ---
----
-title: Teoria
-parent: Interações proteína-DNA (CUT&RUN)
-nav_order: 1
----
 
 # Teoria
 
@@ -373,8 +368,6 @@ A integração dessas camadas permite investigar mecanismos regulatórios de for
 ---
 
 ## Limitações de CUT&RUN
-
-Embora extremamente poderosa, a técnica possui limitações importantes.
 
 ### Algumas limitações incluem:
 

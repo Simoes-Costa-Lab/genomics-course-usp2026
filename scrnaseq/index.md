@@ -4,32 +4,32 @@ nav_order: 5
 has_children: true
 ---
 
-# Single‑cell RNA‑seq
+# Single-Cell RNA-seq
 
-Este módulo introduz a análise de **dados de transcriptômica de single-cell (scRNA‑seq)**, uma abordagem que permite estudar **heterogeneidade celular em tecidos complexos**.
+This module introduces the analysis of **single-cell transcriptomics (scRNA-seq) data**, an approach that enables the study of **cellular heterogeneity in complex tissues**.
 
-A análise de scRNA‑seq permite identificar **tipos celulares, trajetórias de diferenciação e programas regulatórios**.
+scRNA-seq analysis allows researchers to identify **cell types, differentiation trajectories, and regulatory programs**.
 
-## Objetivos do módulo
+## Module Objectives
 
-Ao final deste módulo, os participantes deverão ser capazes de:
+By the end of this module, participants will be able to:
 
-- compreender os princípios da transcriptômica de single-cell
-- realizar etapas básicas de análise de dados de scRNA‑seq
-- interpretar clusters celulares e padrões de expressão
-- explorar estruturas de heterogeneidade celular
+- understand the fundamental principles of single-cell transcriptomics
+- perform basic scRNA-seq data analysis workflows
+- interpret cell clusters and gene expression patterns
+- explore cellular heterogeneity and population structure
 
-## Estrutura do módulo
+## Module Structure
 
-- [Teoria](./theory) – fundamentos da transcriptômica de single-cell  
-- [Sessão prática](./practical) – análise exploratória de dados de scRNA‑seq  
-- [Exercícios](./exercises) – atividades para interpretação de resultados  
-- [Referências](./references) – recursos e leituras recomendadas
+- [Theory](./theory) – fundamentals of single-cell transcriptomics
+- [Practical Session](./practical) – exploratory analysis of scRNA-seq data
+- [Exercises](./exercises) – activities for interpreting results
+- [References](./references) – recommended resources and readings
 
-## Conteúdo abordado
+## Topics Covered
 
-- controle de qualidade de células
-- normalização de dados
-- redução de dimensionalidade
-- clustering de células
-- identificação de genes marcadores
+- cell quality control
+- data normalization
+- dimensionality reduction
+- cell clustering
+- marker gene identification

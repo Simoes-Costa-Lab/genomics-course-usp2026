@@ -87,6 +87,36 @@ ATAC-seq é particularmente sensível à:
 
 ---
 
+## Particularidades de ATAC-seq
+
+Em ATAC-seq:
+
+- fragmentos curtos geralmente correspondem a regiões nucleosome-free
+- fragmentos maiores podem refletir posicionamento nucleossomal
+- reads mitocondriais frequentemente são abundantes
+
+### Distribuição do tamanho dos fragmentos
+
+Uma das métricas mais características de ATAC-seq.
+
+Fragmentos pequenos geralmente correspondem a regiões abertas livres de nucleossomos.
+
+Fragmentos maiores podem refletir:
+
+- mono-nucleossomos
+- di-nucleossomos
+- organização da cromatina
+
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/fragment_distribution.png" width="700">
+</div>
+
+<p align="center">
+<em>Figura 3. Distribuição de fragmentos em ATAC-seq. Fonte: https://www.activemotif.com/blog-library-qc </em>
+</p>
+
+---
+
 ## Visão geral do workflow de ATAC-seq
 
 Um experimento típico de ATAC-seq envolve várias etapas computacionais.
@@ -98,9 +128,8 @@ Um experimento típico de ATAC-seq envolve várias etapas computacionais.
 </div>
 
 <p align="center">
-<em>Figura 3. Visão geral de um workflow típico de ATAC-seq. </em>
+<em>Figura 4. Visão geral de um workflow típico de ATAC-seq. </em>
 </p>
-
 
 ---
 
@@ -109,16 +138,6 @@ Um experimento típico de ATAC-seq envolve várias etapas computacionais.
 Assim como em RNA-seq, o sequenciamento gera arquivos FASTQ contendo reads de DNA.
 
 Cada read representa um fragmento de DNA acessível identificado pela transposase Tn5.
-
-### Particularidades de ATAC-seq
-
-Em ATAC-seq:
-
-- fragmentos curtos geralmente correspondem a regiões nucleosome-free
-- fragmentos maiores podem refletir posicionamento nucleossomal
-- reads mitocondriais frequentemente são abundantes
-
----
 
 ## Controle de qualidade
 
@@ -169,28 +188,6 @@ Altas proporções de reads mitocondriais podem indicar:
 
 - lise excessiva
 - baixa qualidade nuclear
-
----
-
-### Distribuição do tamanho dos fragmentos
-
-Uma das métricas mais características de ATAC-seq.
-
-Fragmentos pequenos geralmente correspondem a regiões abertas livres de nucleossomos.
-
-Fragmentos maiores podem refletir:
-
-- mono-nucleossomos
-- di-nucleossomos
-- organização da cromatina
-
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/fragment_distribution.png" width="700">
-</div>
-
-<p align="center">
-<em>Figura 4. Distribuição de fragmentos em ATAC-seq. Fonte: https://www.activemotif.com/blog-library-qc </em>
-</p>
 
 ---
 
@@ -334,8 +331,6 @@ Ferramentas comuns incluem:
 ---
 
 ## Limitações de ATAC-seq
-
-Embora extremamente poderosa, a técnica possui limitações importantes.
 
 ### Algumas limitações incluem:
 

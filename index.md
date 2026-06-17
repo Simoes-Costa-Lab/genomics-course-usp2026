@@ -1,96 +1,101 @@
 ---
-title: Início
+title: Home
 layout: home
 nav_order: 1
-description: "Curso intensivo de bioinformática com módulos de RNA-seq, ATAC-seq, CUT&RUN e single-cell."
+description: "Intensive bioinformatics course covering RNA-seq, ATAC-seq, CUT&RUN, and single-cell genomics."
 ---
 
+# Genomics of Gene Regulation — USP 2026
 
-# Curso de Genômica para Regulação Gênica — USP 2026
+Welcome to the course materials for the intensive training program hosted at the **University of São Paulo (USP)**.
 
-Bem-vindos ao material do curso intensivo realizado na **Universidade de São Paulo (USP)**.  
-Este curso combina **aulas teóricas sobre regulação gênica** com **bootcamps práticos de análise de dados genômicos**, incluindo transcriptômica, epigenômica e single-cell.
+This course combines **theoretical lectures on gene regulation** with **hands-on bioinformatics bootcamps**, covering transcriptomics, epigenomics, and single-cell genomics.
 
-O material deste site foi organizado para servir como **apoio durante o curso e como apostila de referência posterior**.
+The materials on this website have been organized to serve both as **course support during the program** and as a **reference handbook for future use**.
 
 ---
 
-# Estrutura do curso
+# Course Structure
 
-O curso está organizado em **módulos teóricos pela manhã** e **bootcamps práticos de análise de dados à tarde**, seguidos de desenvolvimento de projetos.
+The course is organized into **morning theoretical lectures** followed by **afternoon data analysis bootcamps** and project development sessions.
 
-Os bootcamps incluem:
+The practical modules include:
 
 - [Transcriptomics (RNA-seq)](./rnaseq/index)
 - [ATAC-seq](./atacseq/index)
 - [CUT&RUN](./cutandrun/index)
-- [Single-cell RNA-seq](./scrnaseq/index)
+- [Single-Cell RNA-seq](./scrnaseq/index)
 
 ---
 
-# Programação
+# Schedule
 
-## Dia 1 — Começo do Curso
+## Day 1 | 28 Jun 2026
 
-| Horário | Atividade |
-|-----|-----|
-| 9:00 – 10:30 | Lecture 01: *An introduction to gene regulation* |
-| 11:00 – 12:00 | Lecture 02: *Analysis of gene expression and gene targeting* |
-| 2:00 – 4:00 | Data analysis bootcamp: **Transcriptomics** |
-| 4:00 – 5:00 | Project development |
+| Time | Type | Activity |
+|------|------|----------|
+| — | Logistics | Arrival at the University of São Paulo and course preparation |
 
 ---
 
-## Dia 2
+## Day 2 | 29 Jun 2026
 
-| Horário | Atividade |
-|-----|-----|
-| 9:00 – 10:30 | Lecture 03: *Gene regulatory networks* |
-| 11:00 – 12:00 | Lecture 04: *Epigenomic regulation and chromatin architecture* |
-| 2:00 – 4:00 | Data analysis bootcamp: **ATAC-seq** |
-| 4:00 – 5:00 | Project development |
-
----
-
-## Dia 3
-
-| Horário | Atividade |
-|-----|-----|
-| 9:00 – 10:30 | Lecture 05: *Cis-regulatory logic in gene expression* |
-| 11:00 – 12:00 | Lecture 06: *Enhancer analysis and targeting* |
-| 2:00 – 4:00 | Data analysis bootcamp: **CUT&RUN** |
-| 4:00 – 5:00 | Project development |
+| Time | Type | Activity |
+|------|------|----------|
+| 09:00–10:30 | Lecture | **Lecture 01:** An Introduction to Gene Regulation (MSC) |
+| 11:00–12:00 | Lecture | **Lecture 02:** Analysis of Gene Expression and Gene Targeting (APA) |
+| 14:00–17:00 | Event | Brazil World Cup Match - No classes |
 
 ---
 
-## Dia 4
+## Day 3 | 30 Jun 2026
 
-| Horário | Atividade |
-|-----|-----|
-| 9:00 – 10:30 | Science Talk: *Genome-wide reconstruction of gene expression patterns in the avian gastrula* |
-| 11:00 – 12:00 | Science Talk: *Metabolism and gene regulation* |
-| 2:00 – 4:00 | Data analysis bootcamp: **scRNA-seq** |
-| 4:00 – 5:00 | Project development |
-
----
-
-## Dia 5
-
-| Horário | Atividade |
-|-----|-----|
-| 9:00 – 10:30 | Science Talk: *Cis-regulatory control of neural crest development* |
-| 11:00 – 12:00 | Student project presentations |
-| 2:00 – 4:00 | Student project presentations and final discussion |
+| Time | Type | Activity |
+|------|------|----------|
+| 09:00–10:30 | Lecture | **Lecture 03:** Gene Regulatory Networks (MSC) |
+| 11:00–12:00 | Lecture | **Lecture 04:** ATAC-seq and CUT&RUN (APA) |
+| 13:30–14:15 | Science Talk | *Metabolism and Gene Regulation* (Fjodor Merkuri) |
+| 14:30–16:30 | Bootcamp | RNA-seq Data Analysis (Helena Conceição) |
+| 16:30–18:00 | Project | Project Development |
 
 ---
 
-# Organização
+## Day 4 | 01 Jul 2026
 
-Universidade de São Paulo (USP)
+| Time | Type | Activity |
+|------|------|----------|
+| 09:00–10:30 | Lecture | **Lecture 05:** The Transcriptional Machinery (MSC) |
+| 11:00–12:00 | Lecture | **Lecture 06:** Enhancer Analysis and Single-Cell Genomics (APA) |
+| 13:30–14:15 | Science Talk | *GRN Inference from Single-Cell Multiomics* (Helena Conceição) |
+| 14:30–16:30 | Bootcamp | ATAC-seq & CUT&RUN Data Analysis (Fjodor Merkuri) |
+| 16:30–18:00 | Project | Project Development |
 
-[Just the Docs]: https://just-the-docs.github.io/just-the-docs/
-[GitHub Pages]: https://docs.github.com/en/pages
-[README]: https://github.com/just-the-docs/just-the-docs-template/blob/main/README.md
-[Jekyll]: https://jekyllrb.com
-[GitHub Pages / Actions workflow]: https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/
-[use this template]: https://github.com/just-the-docs/just-the-docs-template/generate
+---
+
+## Day 5 | 02 Jul 2026
+
+| Time | Type | Activity |
+|------|------|----------|
+| 09:00–10:30 | Lecture | **Lecture 07:** Genome Architecture and Function (MSC) |
+| 11:00–12:00 | Lecture | **Lecture 08:** Chromatin Organization (APA) |
+| 13:30–14:15 | Science Talk | *Spatial Patterning of the Epigenome* (APA) |
+| 14:30–16:30 | Bootcamp | Single-Cell RNA-seq Data Analysis (Helena Conceição) |
+| 16:30–18:00 | Project | Project Development |
+
+---
+
+## Day 6 | 03 Jul 2026
+
+| Time | Type | Activity |
+|------|------|----------|
+| 09:00–10:00 | Science Talk | *Cis-Regulatory Control of Neural Crest Development* (MSC) |
+| 10:00–12:00 | Presentations | Student Project Presentations |
+| 14:00–17:00 | Presentations | Student Project Presentations and Final Discussion |
+
+---
+
+# Organization
+
+**University of São Paulo (USP)**
+
+This course is organized by faculty and researchers from the University of São Paulo and collaborating institutions, bringing together concepts in gene regulation, genomics, and modern bioinformatics approaches for the analysis of high-throughput sequencing data.

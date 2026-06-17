@@ -213,10 +213,9 @@ Representa a sequência completa de DNA de um organismo.
 
 Inclui:
 
-- éxons
-- íntrons
-- regiões intergênicas
 - cromossomos
+- genes
+- regiões intergênicas
 
 ### Transcriptoma
 
@@ -224,7 +223,7 @@ Representa apenas as sequências transcritas esperadas.
 
 Inclui:
 
-- genes expressos
+- éxons de genes expressos
 - isoformas
 - transcritos anotados
 
@@ -239,6 +238,14 @@ O algoritmo tenta determinar:
 - gaps
 - splice junctions
 
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/alingment.png" width="700">
+</div>
+
+<p align="center">
+<em>Figura 5. Alinhamento de reads no genoma de referência. Fonte: https://www.nature.com/articles/nbt0510-421</em>
+</p>
+
 ### Arquivos BAM
 
 Após o alinhamento, os reads são armazenados em arquivos BAM contendo:
@@ -249,19 +256,34 @@ Após o alinhamento, os reads são armazenados em arquivos BAM contendo:
 - informações de pareamento
 
 <div align="center">
-<img src="/genomics-course-usp2026/assets/images/alingment.png" width="700">
+<img src="/genomics-course-usp2026/assets/images/bamfile_example.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 5. Alinhamento de reads no genoma de referência. Fonte: https://www.nature.com/articles/nbt0510-421</em>
+<em>Figura 6. Exemplo de arquivo BAM</em>
 </p>
+
+Cada linha contém:
+
+| Col | Field | Regexp/Range                 | Brief description                    |
+|-----|--------|-------------------------------|--------------------------------------|
+| 1   | QNAME  |  `[!-~]{1,254}`              | Query template NAME                  |
+| 2   | FLAG   | `[0,2^16-1]`                | bitwise FLAG                         |
+| 3   | RNAME  | `\*|[!-()+-<>-~][!-~]*`     | Reference sequence NAME              |
+| 4   | POS    | `[0,2^31-1]`                | 1-based leftmost mapping POSition    |
+| 5   | MAPQ   | `[0,2^8-1]`                 | MAPping Quality                      |
+| 6   | CIGAR  |  `\*|([0-9]+[MIDNSHP=X])+`   | CIGAR string                         |
+| 7   | RNEXT  |  `\*|=|[!-()+-<>-~][!-~]*`   | Ref. name of the mate/next read      |
+| 8   | PNEXT  | `[0,2^31-1]`                | Position of the mate/next read       |
+| 9   | TLEN   |  `[-2^31+1,2^31-1]`          | observed Template LENgth             |
+| 10  | SEQ    |  `\*|[A-Za-z=.]+`            | segment SEQuence                     |
+| 11  | QUAL   |  `[!-~]+`                    | ASCII of Phred-scaled QUALity +33    |
 
 ### Pseudoalinhamento
 
 No pseudoalinhamento, os reads não são alinhados base a base ao genoma.
 
 Em vez disso, o algoritmo identifica rapidamente quais transcritos são compatíveis com cada read.
-
 
 | Característica | Alinhamento          | Pseudoalinhamento    |
 | -------------- | -------------------- | -------------------- |
@@ -276,7 +298,7 @@ Em vez disso, o algoritmo identifica rapidamente quais transcritos são compatí
 </div>
 
 <p align="center">
-<em>Figura 6. Pseudoalinhamento de reads no transcriptoma de referência. Fonte: https://www.nature.com/articles/nbt.3519</em>
+<em>Figura 7. Pseudoalinhamento de reads no transcriptoma de referência. Fonte: https://www.nature.com/articles/nbt.3519</em>
 </p>
 
 ---
@@ -393,8 +415,6 @@ Assim, os valores obtidos representam estimativas da abundância relativa de RNA
 ---
 
 ## Limitações de RNA-seq
-
-Embora RNA-seq seja uma técnica poderosa, existem limitações importantes.
 
 ### Algumas limitações incluem:
 
