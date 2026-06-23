@@ -1,238 +1,238 @@
 ---
-title: Teoria
+title: Theory
 parent: CUT&RUN
 nav_order: 1
 ---
 
-# Teoria
+# Theory
 
-## O que é CUT&RUN?
+# What is CUT&RUN?
 
-CUT&RUN (Cleavage Under Targets and Release Using Nuclease) é uma técnica utilizada para mapear interações entre proteínas e DNA no genoma.
+CUT&RUN (Cleavage Under Targets and Release Using Nuclease) is a technique used to map protein–DNA interactions across the genome.
 
-A abordagem utiliza anticorpos específicos para direcionar uma nuclease às regiões do DNA associadas a proteínas de interesse, como:
+The approach uses specific antibodies to direct a nuclease to DNA regions associated with proteins of interest, such as:
 
-- fatores de transcrição
-- histonas modificadas
-- proteínas regulatórias
+* transcription factors
+* modified histones
+* regulatory proteins
 
-Após a clivagem do DNA nas regiões-alvo, os fragmentos liberados são sequenciados e analisados computacionalmente.
+After DNA cleavage at the target regions, the released fragments are sequenced and analyzed computationally.
 
-CUT&RUN permite identificar:
+CUT&RUN allows researchers to identify:
 
-- sítios de ligação de fatores de transcrição
-- marcas epigenéticas
-- regiões regulatórias ativas ou reprimidas
+* transcription factor binding sites
+* epigenetic marks
+* active or repressed regulatory regions
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/cutandrun_overview.png" width="500">
 </div>
 
 <p align="center">
-<em>Figura 1. Visão geral da técnica de CUT&RUN. Fonte: https://elifesciences.org/articles/21856 </em>
+<em>Figure 1. Overview of the CUT&RUN technique. Source: https://elifesciences.org/articles/21856</em>
 </p>
 
 ---
 
-## Perguntas biológicas comuns
+# Common Biological Questions
 
-CUT&RUN pode ser utilizado para investigar:
+CUT&RUN can be used to investigate:
 
-- sítios de ligação de fatores de transcrição
-- distribuição de modificações de histonas
-- elementos regulatórios ativos
-- mecanismos de regulação gênica
-- remodelamento epigenético
-
----
-
-## Proteínas regulatórias e cromatina
-
-A expressão gênica é controlada por proteínas capazes de interagir com regiões específicas do DNA.
-
-Essas proteínas incluem:
-
-- fatores de transcrição
-- co-fatores
-- proteínas remodeladoras
-- histonas modificadas
-
-CUT&RUN permite mapear essas interações diretamente no genoma.
+* transcription factor binding sites
+* distribution of histone modifications
+* active regulatory elements
+* mechanisms of gene regulation
+* epigenetic remodeling
 
 ---
 
-## Modificações de histonas
+# Regulatory Proteins and Chromatin
 
-As histonas podem sofrer diferentes modificações químicas associadas a estados regulatórios distintos.
+Gene expression is controlled by proteins capable of interacting with specific DNA regions.
 
-### Exemplos comuns
+These proteins include:
 
-| Marca | Associação biológica |
-|---|---|
-| H3K27ac | enhancers ativos |
-| H3K4me3 | promotores ativos |
-| H3K27me3 | repressão gênica |
-| H3K4me1 | enhancers potenciais |
+* transcription factors
+* cofactors
+* chromatin remodeling proteins
+* modified histones
 
----
-
-## Desenho experimental
-
-Assim como em RNA-seq e ATAC-seq, o desenho experimental é fundamental.
-
-### Conceitos importantes
-
-- réplicas biológicas
-- qualidade do anticorpo
-- controles negativos
-- profundidade de sequenciamento
-- batch effects
-
-### Controles importantes
-
-Experimentos de CUT&RUN frequentemente incluem:
-
-- IgG control
-- no-antibody control
-- input DNA (menos comum)
+CUT&RUN enables direct mapping of these interactions across the genome.
 
 ---
 
-## Visão geral do workflow de CUT&RUN
+# Histone Modifications
 
-Um experimento típico de CUT&RUN envolve várias etapas computacionais.
+Histones can undergo different chemical modifications associated with distinct regulatory states.
 
-### Fluxo geral
+## Common Examples
+
+| Mark     | Biological Association |
+| -------- | ---------------------- |
+| H3K27ac  | Active enhancers       |
+| H3K4me3  | Active promoters       |
+| H3K27me3 | Gene repression        |
+| H3K4me1  | Poised enhancers       |
+
+---
+
+# Experimental Design
+
+As with RNA-seq and ATAC-seq, experimental design is fundamental.
+
+## Important Concepts
+
+* biological replicates
+* antibody quality
+* negative controls
+* sequencing depth
+* batch effects
+
+## Important Controls
+
+CUT&RUN experiments frequently include:
+
+* IgG control
+* no-antibody control
+* input DNA (less common)
+
+---
+
+# Overview of the CUT&RUN Workflow
+
+A typical CUT&RUN experiment involves several computational steps.
+
+### General Workflow
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/atacseq_workflow.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 2. Visão geral de um workflow típico de CUT&RUN. </em>
+<em>Figure 2. Overview of a typical CUT&RUN workflow.</em>
 </p>
 
 ---
 
-## Reads e arquivos FASTQ
+# Reads and FASTQ Files
 
-O sequenciamento gera arquivos FASTQ contendo reads derivados das regiões ligadas à proteína de interesse.
+Sequencing generates FASTQ files containing reads derived from genomic regions bound by the protein of interest.
 
-Em CUT&RUN:
+In CUT&RUN:
 
-- os fragmentos costumam ser curtos
-- o background geralmente é baixo
-- o enriquecimento tende a ser altamente específico
-
----
-
-## Controle de qualidade
-
-O controle de qualidade em CUT&RUN avalia:
-
-- qualidade dos reads
-- eficiência do enriquecimento
-- background experimental
-- complexidade da biblioteca
-
-Ferramentas comuns incluem:
-
-- FastQC
-- MultiQC
-- deepTools
+* fragments are typically short
+* background signal is generally low
+* enrichment tends to be highly specific
 
 ---
 
-## Métricas importantes
+# Quality Control
 
-### Qualidade dos reads
+Quality control in CUT&RUN evaluates:
 
-Avalia:
+* read quality
+* enrichment efficiency
+* experimental background
+* library complexity
 
-- qualidade por base
-- conteúdo GC
-- presença de adaptadores
-- duplicação
+Common tools include:
 
----
-
-### Taxa de alinhamento
-
-Indica quantos reads alinham corretamente ao genoma de referência.
-
-Baixas taxas podem indicar:
-
-- contaminação
-- baixa qualidade da biblioteca
-- fragmentos muito curtos
+* FastQC
+* MultiQC
+* deepTools
 
 ---
 
-### Distribuição dos fragmentos
+# Important Metrics
 
-CUT&RUN geralmente produz fragmentos menores e mais específicos do que ChIP-seq.
+## Read Quality
 
-Distribuições anormais podem sugerir:
+Evaluates:
 
-- digestão excessiva
-- baixa eficiência do experimento
-- degradação do DNA
-
----
-
-## Alinhamento
-
-Após QC, os reads são alinhados ao genoma de referência.
-
-Ferramentas comuns incluem:
-
-| Ferramenta | Características |
-|---|---|
-| Bowtie2 | amplamente utilizado |
-| BWA | eficiente para reads curtos |
-
-O objetivo é identificar onde os fragmentos se originaram no genoma.
+* per-base quality
+* GC content
+* adapter contamination
+* duplication levels
 
 ---
 
-## Arquivos BAM
+## Alignment Rate
 
-Após alinhamento, os reads são armazenados em arquivos BAM contendo:
+Indicates how many reads align correctly to the reference genome.
 
-- posição genômica
-- orientação
-- qualidade do alinhamento
-- informações de pareamento
+Low alignment rates may indicate:
 
-Esses arquivos podem ser visualizados em genome browsers como:
-
-- IGV
-- UCSC Genome Browser
+* contamination
+* poor library quality
+* excessively short fragments
 
 ---
 
-## Peak calling
+## Fragment Size Distribution
 
-Peak calling é a etapa utilizada para identificar regiões enriquecidas de reads.
+CUT&RUN generally produces smaller and more specific fragments than ChIP-seq.
 
-Essas regiões representam potenciais sítios de ligação da proteína analisada.
+Abnormal fragment distributions may suggest:
 
-### Ferramentas comuns
-
-| Ferramenta | Características |
-|---|---|
-| MACS2/MACS3 | amplamente utilizado |
-| SEACR | otimizado para CUT&RUN |
+* over-digestion
+* poor experimental efficiency
+* DNA degradation
 
 ---
 
-## Conceito de peak
+# Alignment
 
-Um peak representa:
+After quality control, reads are aligned to the reference genome.
+
+Common tools include:
+
+| Tool    | Characteristics           |
+| ------- | ------------------------- |
+| Bowtie2 | Widely used               |
+| BWA     | Efficient for short reads |
+
+The goal is to identify where the fragments originated in the genome.
+
+---
+
+# BAM Files
+
+After alignment, reads are stored in BAM files containing:
+
+* genomic coordinates
+* orientation
+* alignment quality
+* paired-end information
+
+These files can be visualized using genome browsers such as:
+
+* IGV
+* UCSC Genome Browser
+
+---
+
+# Peak Calling
+
+Peak calling is the step used to identify regions enriched for sequencing reads.
+
+These regions represent potential binding sites for the protein being analyzed.
+
+### Common Tools
+
+| Tool        | Characteristics       |
+| ----------- | --------------------- |
+| MACS2/MACS3 | Widely used           |
+| SEACR       | Optimized for CUT&RUN |
+
+---
+
+# Peak Concept
+
+A peak represents:
 
 ```text
-alta densidade local de fragmentos
-→ possível interação proteína-DNA
+high local fragment density
+→ potential protein–DNA interaction
 ```
 
 <div align="center">
@@ -240,139 +240,137 @@ alta densidade local de fragmentos
 </div>
 
 <p align="center">
-<em>Figura 3. Exemplo de peaks em CUT&RUN. fonte: https://genome.cshlp.org/content/30/1/35</em>
+<em>Figure 3. Example of peaks identified in CUT&RUN. Source: https://genome.cshlp.org/content/30/1/35</em>
 </p>
 
 ---
 
-## Narrow peaks e broad peaks
+# Narrow Peaks and Broad Peaks
 
-Diferentes proteínas geram padrões distintos de enriquecimento.
+Different proteins generate distinct enrichment patterns.
 
-### Narrow peaks
+### Narrow Peaks
 
-Associados a:
+Typically associated with:
 
-- fatores de transcrição
-- ligação localizada
+* transcription factors
+* localized binding events
 
-### Broad peaks
+## Broad Peaks
 
-Associados a:
+Typically associated with:
 
-- modificações de histonas
-- domínios cromatínicos amplos
-
----
-
-## Quantificação de sinal
-
-Após identificar os picos, é possível quantificar intensidade de sinal entre amostras.
-
-O resultado geralmente é uma matriz:
-
-| Peak | Sample_1 | Sample_2 |
-|---|---|---|
-| chr1:1-100 | 120 | 340 |
-| chr2:200-300 | 540 | 210 |
-
-Nessa matriz:
-
-- linhas representam regiões enriquecidas
-- colunas representam amostras
-- valores representam abundância de fragmentos
+* histone modifications
+* large chromatin domains
 
 ---
 
-## Normalização
+# Signal Quantification
 
-Em CUT&RUN, diferenças técnicas entre bibliotecas podem influenciar a intensidade do sinal observado entre amostras.
+After peaks have been identified, signal intensity can be quantified across samples.
 
-Essas diferenças incluem:
+The result is typically a matrix:
 
-- profundidade de sequenciamento
-- eficiência de digestão
-- enriquecimento do anticorpo
-- complexidade da biblioteca
-- background experimental
+| Peak         | Sample_1 | Sample_2 |
+| ------------ | -------- | -------- |
+| chr1:1-100   | 120      | 340      |
+| chr2:200-300 | 540      | 210      |
 
-A normalização busca reduzir esses efeitos técnicos antes de comparações biológicas.
+In this matrix:
 
-### Abordagens comuns
-
-| Método | Objetivo |
-|---|---|
-| CPM | corrigir profundidade de sequenciamento |
-| RPGC | normalização por cobertura genômica |
-| DESeq2 size factors | comparação robusta entre amostras |
-
-Após normalização, os dados podem ser utilizados para:
-
-- comparação de enriquecimento
-- geração de heatmaps
-- metaplots
-- análise diferencial de peaks
+* rows represent enriched regions
+* columns represent samples
+* values represent fragment abundance
 
 ---
 
-## Enriquecimento diferencial
+# Normalization
 
-CUT&RUN pode ser utilizado para comparar enriquecimento entre condições biológicas.
+In CUT&RUN, technical differences between libraries can influence the observed signal intensity across samples.
 
-Essas análises permitem investigar:
+These differences include:
 
-- ganho ou perda de ligação
-- remodelamento epigenético
-- mudanças regulatórias
+* sequencing depth
+* digestion efficiency
+* antibody enrichment efficiency
+* library complexity
+* experimental background
 
-Ferramentas comuns incluem:
+Normalization aims to reduce these technical effects before biological comparisons.
 
-- DiffBind
-- DESeq2
-- edgeR
+## Common Approaches
 
----
+| Method              | Purpose                          |
+| ------------------- | -------------------------------- |
+| CPM                 | Correct sequencing depth         |
+| RPGC                | Normalize by genomic coverage    |
+| DESeq2 size factors | Robust comparison across samples |
 
-## Motif analysis
+After normalization, the data can be used for:
 
-Após identificar peaks, é possível buscar sequências enriquecidas de DNA chamadas motifs.
-
-Motifs podem indicar:
-
-- fatores de transcrição ativos
-- programas regulatórios
-- redes gênicas potenciais
-
-Ferramentas comuns incluem:
-
-- HOMER
-- MEME
-- chromVAR
+* enrichment comparisons
+* heatmap generation
+* metaplot visualization
+* differential peak analysis
 
 ---
 
-## Integração com RNA-seq e ATAC-seq
+# Differential Enrichment
 
-CUT&RUN frequentemente é integrado com outras abordagens genômicas.
+CUT&RUN can be used to compare enrichment patterns between biological conditions.
 
-### Exemplos
+These analyses allow researchers to investigate:
 
-| Técnica | Informação |
-|---|---|
-| RNA-seq | expressão gênica |
-| ATAC-seq | acessibilidade cromatínica |
-| CUT&RUN | ligação proteína-DNA |
+* gain or loss of binding
+* epigenetic remodeling
+* regulatory changes
 
-A integração dessas camadas permite investigar mecanismos regulatórios de forma mais completa.
+Common tools include:
+
+* DiffBind
+* DESeq2
+* edgeR
 
 ---
 
-## Limitações de CUT&RUN
+# Motif Analysis
 
-### Algumas limitações incluem:
+After identifying peaks, enriched DNA sequence motifs can be identified.
 
-- dependência da qualidade do anticorpo
-- resolução depende da proteína analisada
-- background experimental ainda pode ocorrer
-- proteínas pouco abundantes podem gerar sinal fraco
-- interpretação funcional nem sempre é direta
+Motifs may indicate:
+
+* active transcription factors
+* regulatory programs
+* potential gene regulatory networks
+
+Common tools include:
+
+* HOMER
+* MEME
+* chromVAR
+
+---
+
+# Integration with RNA-seq and ATAC-seq
+
+CUT&RUN is frequently integrated with other genomic approaches.
+
+## Examples
+
+| Technique | Information             |
+| --------- | ----------------------- |
+| RNA-seq   | Gene expression         |
+| ATAC-seq  | Chromatin accessibility |
+| CUT&RUN   | Protein–DNA binding     |
+
+Integrating these layers allows researchers to investigate regulatory mechanisms more comprehensively.
+
+---
+
+# Limitations of CUT&RUN
+
+* dependence on antibody quality
+* resolution depends on the protein being analyzed
+* experimental background may still occur
+* low-abundance proteins may generate weak signals
+* functional interpretation is not always straightforward

@@ -771,7 +771,7 @@ saveRDS(
 
 # The End
 
-I know you would like to keep analyzing this single cell data to it's fullest and discover all the subclasses of the known cell types and publish your very own Nature paper. But fear not! Though this class has come to an end, I'll leave resources in the References tab to go even deeper and wilder in your analysis:
+I know you would like to keep analyzing this single cell data to it's fullest and discover all the subclasses of the known cell types and publish your very own Nature paper. But fear not! Though this class has come to an end, I'll leave resources in the  [References](./references)  tab to go even deeper and wilder in your analysis:
 - what happens when I have a healthy and a disease sample?
 - what about control versus treatment?
 - what if I have different stages of the same tissue or disease?

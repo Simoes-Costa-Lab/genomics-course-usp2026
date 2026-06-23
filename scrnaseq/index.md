@@ -1,6 +1,6 @@
 ---
 title: Single‑cell RNA-seq
-nav_order: 5
+nav_order: 6
 has_children: true
 ---
 
@@ -23,7 +23,6 @@ By the end of this module, participants will be able to:
 
 - [Theory](./theory) – fundamentals of single-cell transcriptomics
 - [Practical Session](./practical) – exploratory analysis of scRNA-seq data
-- [Exercises](./exercises) – activities for interpreting results
 - [References](./references) – recommended resources and readings
 
 ## Topics Covered

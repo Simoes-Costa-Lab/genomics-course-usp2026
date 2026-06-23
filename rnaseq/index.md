@@ -1,38 +1,38 @@
 ---
 title: Transcriptomics (RNA-seq)
-nav_order: 2
+nav_order: 3
 has_children: true
 ---
 
 # Transcriptomics (RNA-seq)
 
-Esse módulo é uma introdução para análises de **sequenciamento de RNA (RNA-seq)**, um método para quantificar expressão gênica em amostras biológicas.
+This module provides an introduction to **RNA sequencing (RNA-seq)** analysis, a powerful approach for measuring gene expression in biological samples.
 
-Vamos introduzir conceitos-chave e uma sessão prática de análise de RNA-seq.
+We will introduce key concepts in transcriptomics and perform a guided RNA-seq data analysis workflow.
 
-## Objetivos
+## Learning Objectives
 
-Após a conclusão desse módulo, os alunos devem ser capazes de:
+By the end of this module, students should be able to:
 
-- compreender princípios básicos de experimentos de RNA-seq
-- reconhecer os principais passos da análise de RNA-seq
-- realizar análises exploratórias de dados de transcriptoma
+- understand the basic principles of RNA-seq experiments
+- recognize the major steps in an RNA-seq analysis workflow
+- perform exploratory analyses of transcriptomic data
 
-## Estrutura do módulo
+## Module Structure
 
-Esse módulo inclui:
-- [Teoria](./theory): princípios biológicos e computacionais de RNA-seq
-- [Sessão prática](./practical): análise guiada de dados
-- [Exercícios](./exercises): atividades para fixação e desenvolvimento do projeto
-- [Referências](./references): recursos adicionais e recomendações de leitura
+This module includes:
 
-## Conteúdo
+- [Theory](./theory): biological and computational principles of RNA-seq
+- [Practical Session](./practical): guided data analysis
+- [References](./references): additional resources and recommended readings
 
-- desenho experimental em RNA-seq
-- controle de qualidade de dados de sequenciamento
-- alinhamento de reads
-- quantificação de expressão gênica
-- análises exploratórias e expressão diferencial
-- interpretação de resultados
+## Topics Covered
+
+- experimental design in RNA-seq
+- sequencing data quality control
+- read alignment
+- gene expression quantification
+- exploratory analyses and differential expression
+- interpretation of results
 
 

@@ -1,102 +1,102 @@
 ---
-title: Teoria
+title: Theory
 parent: Transcriptomics (RNA-seq)
 nav_order: 1
 ---
 
-# Teoria
+# Theory
 
-## O que é RNA-seq?
+# What is RNA-seq?
 
-RNA-seq (RNA sequencing) é uma técnica utilizada para quantificar moléculas de RNA presentes em uma amostra biológica.
+RNA-seq (RNA sequencing) is a technique used to quantify RNA molecules present in a biological sample.
 
-De forma simplificada, o RNA extraído das células é convertido em uma biblioteca de DNA complementar (cDNA), sequenciado, e posteriormente analisado computacionalmente.
+In simplified terms, RNA extracted from cells is converted into a complementary DNA (cDNA) library, sequenced, and subsequently analyzed computationally.
 
-A quantidade de reads associadas a um gene pode ser utilizada como uma estimativa de sua expressão gênica.
+The number of reads associated with a gene can be used as an estimate of its expression level.
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/rnaseq_overview.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 1. Visão geral de técnica de RNA-seq. (Template do BioRender)</em>
+<em>Figure 1. Overview of the RNA-seq workflow. (BioRender template)</em>
 </p>
 
 ---
 
-## Perguntas biológicas comuns
+# Common Biological Questions
 
-RNA-seq pode ser utilizado para investigar:
+RNA-seq can be used to investigate:
 
-- genes diferencialmente expressos entre condições
-- resposta celular a tratamentos
-- diferenças entre tecidos ou tipos celulares
-- programas regulatórios e vias moleculares
+- differentially expressed genes between conditions
+- cellular responses to treatments
+- differences between tissues or cell types
+- regulatory programs and molecular pathways
 
 ---
 
-## Desenho experimental
+# Experimental Design
 
-O desenho experimental é uma das etapas mais importantes de um experimento de RNA-seq.
+Experimental design is one of the most important aspects of an RNA-seq experiment.
 
-Mesmo análises computacionais sofisticadas não conseguem compensar problemas no planejamento experimental.
+Even sophisticated computational analyses cannot compensate for poor experimental planning.
 
-### Conceitos importantes
+## Important Concepts
 
-- réplicas biológicas
-- controles experimentais
+- biological replicates
+- experimental controls
 - batch effects
-- profundidade de sequenciamento
-- randomização
+- sequencing depth
+- randomization
 
-### Exemplo
+## Example
 
-| Bom desenho experimental | Desenho problemático |
+| Good Experimental Design | Problematic Experimental Design |
 |---|---|
-| múltiplas réplicas biológicas | apenas uma amostra por grupo |
-| batches balanceados | grupos processados separadamente |
-| controles adequados | ausência de controle |
+| multiple biological replicates | only one sample per group |
+| balanced batches | groups processed separately |
+| appropriate controls | lack of controls |
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/experimental_overview.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 2. Efeitor confundidor entre técnica e biologia. (Fonte: https://www.biorxiv.org/content/10.1101/025528v1)</em>
+<em>Figure 2. Confounding effects between technical variation and biology. Source: https://www.biorxiv.org/content/10.1101/025528v1</em>
 </p>
 
 ---
 
-## Visão geral do workflow de RNA-seq
+# Overview of the RNA-seq Workflow
 
-Um experimento típico de RNA-seq envolve várias etapas computacionais.
+A typical RNA-seq experiment involves several computational steps.
 
-### Fluxo geral
+## General Workflow
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/rnaseq_workflow.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 3. Visão geral de um workflow típico de RNA-seq.</em>
+<em>Figure 3. Overview of a typical RNA-seq workflow.</em>
 </p>
 
 ---
 
-## Reads e arquivos FASTQ
+# Reads and FASTQ Files
 
-O sequenciamento gera arquivos FASTQ contendo reads de RNA.
+Sequencing generates FASTQ files containing RNA reads.
 
-Cada read possui:
+Each read contains:
 
-| Linha | Descrição |
+| Line | Description |
 |---|---|
-| 1 | Identificador do read: sempre começa com @ |
-| 2 | Sequência do read |
-| 3 | Sempre começa com +: pode ou não ter o nome do read |
-| 4 | Score de qualidade de cada nucleotídeo do read |
+| 1 | Read identifier; always begins with @ |
+| 2 | Read sequence |
+| 3 | Always begins with + |
+| 4 | Quality score for each nucleotide in the read |
 
-Exemplo:
+## Example
 
 ```text
 @HWI-ST330:304:H045HADXX:1:1101:1111:61397
@@ -106,83 +106,84 @@ CACTTGTAAGGGCAGGCCCCCTTCACCCTCCCGCTCCTGGGGGANNNNNNNNNNANNNCGAGGCCCTGGGGTAGAGGGNN
 ```
 
 ```text
- Código de qualidade: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHI
-                      |         |         |         |         |
-  Score de qualidade: 0........10........20........30........40   
+ Quality code:  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHI
+                |         |         |         |         |
+ Quality score: 0........10........20........30........40   
 ```
-
 ---
 
-## Controle de qualidade
+# Quality Control
 
-Antes da análise, é importante avaliar a qualidade dos dados de sequenciamento.
+Before analysis, it is important to evaluate sequencing quality.
 
-Ferramentas comuns incluem:
+Common tools include:
 
 - FastQC
 - MultiQC
 
-### Por que controle de qualidade é importante?
+## Why is Quality Control Important?
 
-Reads de baixa qualidade podem:
+Low-quality reads can:
 
-- mapear incorretamente
-- reduzir eficiência de alinhamento
-- gerar falsos positivos
-- aumentar ruído experimental
+- map incorrectly
+- reduce alignment efficiency
+- generate false positives
+- increase experimental noise
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/fastq_quality.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 4. Exemplo de qualidade do fastq.</em>
+<em>Figure 4. Example of FASTQ quality assessment.</em>
 </p>
 
-## Métricas avaliadas
+## Common Metrics
 
-### Qualidade por base
+## Per-base Quality
 
-Uma das métricas mais importantes é a qualidade média ao longo dos ciclos de sequenciamento.
+One of the most important metrics is the average quality score across sequencing cycles.
 
-Em geral:
+In general:
 
-- reads tendem a perder qualidade no final
-- regiões de baixa qualidade podem ser removidas durante trimming
+- reads tend to lose quality toward their ends
+- low-quality regions can be removed during trimming
 
-### Conteúdo GC
+## GC Content
 
-Avalia a distribuição de conteúdo GC nos reads.
+Evaluates the distribution of GC content across reads.
 
-Desvios inesperados podem indicar:
+Unexpected deviations may indicate:
 
-- contaminação
-- viés de biblioteca
-- composição incomum da amostra
+- contamination
+- library preparation bias
+- unusual sample composition
 
-### Sequências adaptadoras
+## Adapter Sequences
 
-Durante o preparo da biblioteca, adaptadores são adicionados às moléculas.
+During library preparation, adapters are added to nucleic acid fragments.
 
-Quando fragmentos muito curtos são sequenciados, partes desses adaptadores podem aparecer nos reads.
+When very short fragments are sequenced, portions of these adapters may appear within reads.
 
-Isso pode:
+This can:
 
-- prejudicar alinhamento
-- afetar quantificação
-- aumentar ruído técnico
+- interfere with alignment
+- affect quantification
+- increase technical noise
 
-Ferramentas de trimming removem essas sequências antes da análise.
+Trimming tools remove these sequences before downstream analysis.
 
-## Trimming e filtragem
+---
 
-Após QC, reads podem passar por:
+# Trimming and Filtering
 
-- remoção de adaptadores
-- remoção de bases de baixa qualidade
-- filtragem de reads curtos
+After QC, reads may undergo:
 
-Ferramentas comuns incluem:
+- adapter removal
+- low-quality base trimming
+- filtering of short reads
+
+Common tools include:
 
 - Trim Galore
 - fastp
@@ -190,50 +191,46 @@ Ferramentas comuns incluem:
 
 ---
 
-## Alinhamento e pseudoalinhamento
+# Alignment and Pseudoalignment
 
-Após o controle de qualidade, os reads precisam ser associados a genes ou transcritos de referência.
+After quality control, reads must be assigned to reference genes or transcripts.
 
-Essa etapa permite identificar:
+This step allows us to determine:
 
-- de qual gene um read provavelmente se originou
-quais genes estão sendo expressos
-- a abundância relativa de cada transcrito
+- which gene a read most likely originated from
+- which genes are being expressed
+- the relative abundance of each transcript
 
-### Ferramentas comuns
+## Common Tools
 
-| Estratégia | Ferramentas |
+| Strategy | Tools |
 |---|---|
-| alinhamento | STAR, HISAT2 |
-| pseudoalinhamento | Salmon, Kallisto |
-	
-### Genoma de referência
+| Alignment | STAR, HISAT2 |
+| Pseudoalignment | Salmon, Kallisto |
 
-Representa a sequência completa de DNA de um organismo.
+## Reference Genome
 
-Inclui:
+Represents the complete DNA sequence of an organism, including:
 
-- cromossomos
+- chromosomes
 - genes
-- regiões intergênicas
+- intergenic regions
 
-### Transcriptoma
+## Transcriptome
 
-Representa apenas as sequências transcritas esperadas.
+Represents only the expected transcribed sequences, including:
 
-Inclui:
+- exons from expressed genes
+- isoforms
+- annotated transcripts
 
-- éxons de genes expressos
-- isoformas
-- transcritos anotados
+## Traditional Alignment
 
-### Alinhamento tradicional
+In traditional alignment, each read is mapped directly to the reference genome.
 
-No alinhamento tradicional, cada read é mapeado diretamente ao genoma de referência.
+The algorithm attempts to determine:
 
-O algoritmo tenta determinar:
-
-- posição exata do read
+- the exact read position
 - mismatches
 - gaps
 - splice junctions
@@ -243,27 +240,27 @@ O algoritmo tenta determinar:
 </div>
 
 <p align="center">
-<em>Figura 5. Alinhamento de reads no genoma de referência. Fonte: https://www.nature.com/articles/nbt0510-421</em>
+<em>Figure 5. Alignment of sequencing reads to a reference genome.</em>
 </p>
 
-### Arquivos BAM
+## BAM Files
 
-Após o alinhamento, os reads são armazenados em arquivos BAM contendo:
+After alignment, reads are stored in BAM files containing:
 
-- posição genômica
-- orientação
-- qualidade do alinhamento
-- informações de pareamento
+- genomic position
+- orientation
+- alignment quality
+- pairing information
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/bamfile_example.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 6. Exemplo de arquivo BAM</em>
+<em>Figure 6. Example of a BAM file.</em>
 </p>
 
-Cada linha contém:
+Each line contains:
 
 | Col | Field | Regexp/Range                 | Brief description                    |
 |-----|--------|-------------------------------|--------------------------------------|
@@ -279,55 +276,55 @@ Cada linha contém:
 | 10  | SEQ    |  `\*|[A-Za-z=.]+`            | segment SEQuence                     |
 | 11  | QUAL   |  `[!-~]+`                    | ASCII of Phred-scaled QUALity +33    |
 
-### Pseudoalinhamento
+## Pseudoalignment
 
-No pseudoalinhamento, os reads não são alinhados base a base ao genoma.
+In pseudoalignment, reads are not aligned base-by-base to the genome.
 
-Em vez disso, o algoritmo identifica rapidamente quais transcritos são compatíveis com cada read.
+Instead, the algorithm rapidly identifies which transcripts are compatible with each read.
 
-| Característica | Alinhamento          | Pseudoalinhamento    |
-| -------------- | -------------------- | -------------------- |
-| velocidade     | menor                | maior                |
-| uso de memória | maior                | menor                |
-| detalhamento   | alto                 | moderado             |
-| geração de BAM | sim                  | geralmente não       |
-| ideal para     | análises estruturais | quantificação rápida |
+| Feature | Alignment | Pseudoalignment |
+|---|---|---|
+| Speed | Lower | Higher |
+| Memory usage | Higher | Lower |
+| Resolution | High | Moderate |
+| BAM generation | Yes | Usually no |
+| Best suited for | Structural analyses | Rapid quantification |
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/kallisto.png" width="350">
 </div>
 
 <p align="center">
-<em>Figura 7. Pseudoalinhamento de reads no transcriptoma de referência. Fonte: https://www.nature.com/articles/nbt.3519</em>
+<em>Figure 7. Pseudoalignment of reads to a reference transcriptome.</em>
 </p>
 
 ---
 
-## Quantificação de expressão gênica
+# Gene Expression Quantification
 
-Após o alinhamento, os reads são quantificados para gerar uma matriz de expressão gênica.
+After alignment, reads are quantified to generate a gene expression matrix.
 
-### Como a quantificação funciona?
+## How Does Quantification Work?
 
-De forma simplificada, a quantificação consiste em contar quantos reads foram associados a cada gene.
+In simple terms, quantification consists of counting how many reads are associated with each gene.
 
-Genes mais expressos tendem a gerar:
+More highly expressed genes tend to generate:
 
-- mais moléculas de RNA
-- mais fragmentos durante o preparo da biblioteca
-- mais reads no sequenciamento
+- more RNA molecules
+- more fragments during library preparation
+- more sequencing reads
 
-### Da sequência para a matriz de expressão
+## From sequence to expression matrix
 
-Durante essa etapa:
+During this step:
 
 ```mermaid
 flowchart LR
 
-    A[Reads alinhados]
-    B[Genes de referência]
-    C[Contagem por gene]
-    D[Matriz de expressão]
+    A[Aligned Reads]
+    B[Reference Genes]
+    C[Counting by Gene]
+    D[Expression Matrix]
 
     A --> C
     B --> C
@@ -342,83 +339,77 @@ flowchart LR
     class D output;
 ```
 
-Cada gene recebe um valor correspondente ao número de reads observados naquela amostra.
-
-### Estrutura típica da matriz
+## Typical Matrix Structure
 
 | Gene | Sample_1 | Sample_2 |
 |---|---|---|
 | GeneA | 120 | 95 |
 | GeneB | 540 | 620 |
 
-Nessa matriz:
+In this matrix:
 
-- linhas representam genes
-- colunas representam amostras
-- valores representam abundância de reads
+- rows represent genes
+- columns represent samples
+- values represent read abundance
 
-Essa matriz é a principal entrada para análises downstream como:
+This matrix serves as the primary input for downstream analyses such as:
 
 - PCA
 - clustering
-- expressão diferencial
-- enriquecimento funcional
+- differential expression analysis
+- functional enrichment
 
-### Contagens brutas não são diretamente comparáveis
+## Raw Counts Are Not Directly Comparable
 
-O número absoluto de reads depende de fatores técnicos como:
+Absolute read counts depend on technical factors such as:
 
-- profundidade de sequenciamento
-- tamanho da biblioteca
-- composição da amostra
+- sequencing depth
+- library size
+- sample composition
 
-Por isso, antes de comparar amostras, os dados precisam passar por etapas de normalização.
+Therefore, data must be normalized before samples can be compared.
 
-### Normalização
+## Normalization
 
-A normalização tenta corrigir diferenças técnicas entre amostras para permitir comparações biológicas mais confiáveis.
+Normalization aims to correct technical differences between samples and enable more reliable biological comparisons.
 
-Exemplos de abordagens
+| Method | Purpose |
+|---|---|
+| CPM | Correct sequencing depth |
+| TPM | Normalize for gene length |
+| DESeq2 size factors | Robust normalization across samples |
 
-| Método              | Objetivo                            |
-| ------------------- | ----------------------------------- |
-| CPM                 | corrigir profundidade               |
-| TPM                 | normalizar tamanho gênico           |
-| DESeq2 size factors | normalização robusta entre amostras |
+## Highly Expressed Genes Can Dominate Libraries
 
-### Genes altamente expressos dominam a biblioteca
+A small number of highly expressed genes may account for a large fraction of total reads.
 
-Em RNA-seq, poucos genes muito expressos podem representar grande parte dos reads totais.
+This can affect:
 
-Isso pode afetar:
+- sample comparisons
+- detection of lowly expressed genes
+- biological interpretation
 
-- comparação entre amostras
-- detecção de genes pouco expressos
-- interpretação biológica
+## Counts Are Estimates
 
-Por isso, métodos estatísticos específicos são necessários para modelar os dados corretamente.
+RNA-seq does not directly measure RNA molecules.
 
-### Contagens representam estimativas
+Observed counts are influenced by:
 
-É importante lembrar que RNA-seq não mede moléculas diretamente.
+- extraction efficiency
+- library preparation
+- PCR amplification
+- sequencing bias
+- alignment performance
 
-As contagens observadas são influenciadas por:
-
-- eficiência de extração
-- preparo de biblioteca
-- PCR
-- viés de sequenciamento
-- alinhamento
-
-Assim, os valores obtidos representam estimativas da abundância relativa de RNA.
+Therefore, counts represent estimates of relative RNA abundance.
 
 ---
 
-## Limitações de RNA-seq
+# Limitations of RNA-seq
 
-### Algumas limitações incluem:
+Some limitations include:
 
-- RNA não corresponde necessariamente à abundância proteica
-- batch effects podem influenciar resultados
-- populações celulares heterogêneas podem mascarar sinais biológicos
-- resultados dependem fortemente do desenho experimental
+- RNA abundance does not necessarily reflect protein abundance
+- batch effects can influence results
+- heterogeneous cell populations may mask biological signals
+- results depend strongly on experimental design

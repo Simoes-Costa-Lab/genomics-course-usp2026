@@ -6,7 +6,7 @@ nav_order: 1
 
 # Theory
 
-## What is scRNA-seq?
+# What is scRNA-seq?
 
 Single-cell RNA-seq (scRNA-seq) is a technique used to measure gene expression individually in thousands of cells simultaneously.
 
@@ -22,7 +22,7 @@ Unlike conventional RNA-seq (bulk RNA-seq), where the observed signal represents
 
 ---
 
-## Common Biological Questions
+# Common Biological Questions
 
 scRNA-seq can be used to investigate:
 
@@ -35,13 +35,13 @@ scRNA-seq can be used to investigate:
 
 ---
 
-## Bulk RNA-seq vs scRNA-seq
+# Bulk RNA-seq vs scRNA-seq
 
 In bulk RNA-seq, the measured signal represents the average expression across thousands or millions of cells.
 
 In contrast, scRNA-seq measures gene expression at the level of individual cells.
 
-### Comparison
+## Comparison
 
 | Bulk RNA-seq | scRNA-seq |
 |---|---|
@@ -60,7 +60,7 @@ In contrast, scRNA-seq measures gene expression at the level of individual cells
 
 ---
 
-## Cell Isolation and Barcoding
+# Cell Isolation and Barcoding
 
 In platforms such as 10x Genomics, individual cells are encapsulated into droplets containing beads with molecular barcodes.
 
@@ -69,19 +69,19 @@ Each RNA molecule receives:
 - a cell barcode
 - a UMI (Unique Molecular Identifier)
 
-### Cell Barcodes
+## Cell Barcodes
 
 Cell barcodes allow identification of the cell from which each read originated.
 
-### UMIs
+## UMIs
 
 UMIs enable the identification of unique RNA molecules and help reduce PCR amplification bias.
 
 ---
 
-## Overview of the scRNA-seq Workflow
+# Overview of the scRNA-seq Workflow
 
-### General Workflow
+## General Workflow
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/scrnaseq_workflow.png" width="700">
@@ -93,7 +93,7 @@ UMIs enable the identification of unique RNA molecules and help reduce PCR ampli
 
 ---
 
-## Cell-by-Gene Matrix
+# Cell-by-Gene Matrix
 
 After alignment and quantification, the data are organized into a matrix:
 
@@ -111,7 +111,7 @@ In this matrix:
 
 ---
 
-## Sparsity and Dropouts
+# Sparsity and Dropouts
 
 scRNA-seq matrices are typically highly sparse.
 
@@ -126,13 +126,13 @@ These zero values are commonly referred to as **dropouts**.
 
 ---
 
-## Quality Control
+# Quality Control
 
 Quality control in scRNA-seq is performed at the level of individual cells.
 
 The goal is to remove low-quality cells before downstream analysis.
 
-### Common Metrics
+## Common Metrics
 
 | Metric | Interpretation |
 |---|---|
@@ -142,7 +142,7 @@ The goal is to remove low-quality cells before downstream analysis.
 
 ---
 
-## Low-Quality Cells
+# Low-Quality Cells
 
 Problematic cells frequently exhibit:
 
@@ -158,7 +158,7 @@ These cells often correspond to:
 
 ---
 
-## Doublets
+# Doublets
 
 In some cases, two cells may be encapsulated within the same droplet.
 
@@ -173,19 +173,19 @@ Common tools include:
 
 ---
 
-## Normalization
+# Normalization
 
 Individual cells are sequenced at different depths.
 
 Normalization aims to correct these technical differences before comparing cells.
 
-### Goals of Normalization
+## Goals of Normalization
 
 - correct sequencing depth differences
 - stabilize variance
 - enable comparisons across cells
 
-### Common Methods
+## Common Methods
 
 | Method | Tool |
 |---|---|
@@ -195,7 +195,7 @@ Normalization aims to correct these technical differences before comparing cells
 
 ---
 
-## Selection of Highly Variable Genes
+# Selection of Highly Variable Genes
 
 Not all genes are equally informative.
 
@@ -209,13 +209,13 @@ These genes are often used in downstream analyses.
 
 ---
 
-## Dimensionality Reduction
+# Dimensionality Reduction
 
 scRNA-seq experiments measure thousands of genes per cell.
 
 Dimensionality reduction techniques help summarize these high-dimensional datasets.
 
-### Common Methods
+## Common Methods
 
 | Method | Purpose |
 |---|---|
@@ -233,7 +233,7 @@ Dimensionality reduction techniques help summarize these high-dimensional datase
 
 ---
 
-## Cell Clustering
+# Cell Clustering
 
 After dimensionality reduction, similar cells can be grouped together.
 
@@ -243,14 +243,9 @@ These clusters often correspond to:
 - cell states
 - distinct biological populations
 
-Common tools include:
-
-- Seurat
-- Scanpy
-
 ---
 
-## Cell Annotation
+# Cell Annotation
 
 After identifying clusters, each population must be interpreted biologically.
 
@@ -262,7 +257,7 @@ This is typically achieved using:
 
 ---
 
-## Differential Expression Analysis
+# Differential Expression Analysis
 
 scRNA-seq also enables comparisons of gene expression between:
 
@@ -272,9 +267,7 @@ scRNA-seq also enables comparisons of gene expression between:
 
 ---
 
-## Limitations of scRNA-seq
-
-### Common limitations include:
+# Limitations of scRNA-seq
 
 - high sparsity
 - technical dropouts

@@ -1,255 +1,259 @@
 ---
-title: Teoria
+title: Theory
 parent: ATAC-seq
 nav_order: 1
 ---
 
-# Teoria
+# Theory
 
-## O que é ATAC-seq?
+# What is ATAC-seq?
 
-ATAC-seq (Assay for Transposase-Accessible Chromatin using sequencing) é uma técnica utilizada para identificar regiões acessíveis da cromatina em uma população celular.
+ATAC-seq (Assay for Transposase-Accessible Chromatin using sequencing) is a technique used to identify accessible chromatin regions within a cell population.
 
-A técnica utiliza uma transposase hiperativa (Tn5) que fragmenta preferencialmente regiões abertas da cromatina e simultaneamente adiciona adaptadores de sequenciamento.
+The method uses a hyperactive transposase (Tn5) that preferentially fragments open chromatin regions while simultaneously inserting sequencing adapters.
 
-As regiões acessíveis identificadas por ATAC-seq frequentemente correspondem a:
+Accessible regions identified by ATAC-seq frequently correspond to:
 
-- enhancers
-- promotores
-- regiões regulatórias ativas
-- sítios de ligação de fatores de transcrição
+* enhancers
+* promoters
+* active regulatory regions
+* transcription factor binding sites
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/atacseq_overview.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 1. Visão geral da técnica de ATAC-seq. Template do Biorender </em>
+<em>Figure 1. Overview of the ATAC-seq technique. BioRender template.</em>
 </p>
 
 ---
 
-## Perguntas biológicas comuns
+# Common Biological Questions
 
-ATAC-seq pode ser utilizado para investigar:
+ATAC-seq can be used to investigate:
 
-- regiões regulatórias ativas
-- resposta epigenética a estímulos
-- diferenças regulatórias entre tecidos
-- fatores de transcrição potencialmente ativos
+* active regulatory regions
+* epigenetic responses to stimuli
+* regulatory differences between tissues
+* potentially active transcription factors
 
 ---
 
-## Cromatina aberta e fechada
+# Open and Closed Chromatin
 
-O DNA nuclear está organizado em estruturas chamadas nucleossomos.
+Nuclear DNA is organized into structures called nucleosomes.
 
-Regiões altamente compactadas tendem a ser menos acessíveis à maquinaria transcricional.
+Highly compacted regions tend to be less accessible to the transcriptional machinery.
 
-Já regiões abertas da cromatina permitem:
+In contrast, open chromatin regions allow:
 
-- ligação de fatores de transcrição
-- recrutamento de RNA polimerase
-- ativação gênica
+* transcription factor binding
+* RNA polymerase recruitment
+* gene activation
 
-ATAC-seq explora justamente essa diferença de acessibilidade.
+ATAC-seq exploits these differences in chromatin accessibility.
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/chromatin_accessibility.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 2. Regiões abertas e fechadas da cromatina. Fonte: https://www.nature.com/articles/s41576-018-0089-8 </em>
+<em>Figure 2. Open and closed chromatin regions. Source: https://www.nature.com/articles/s41576-018-0089-8</em>
 </p>
 
 ---
 
-## Desenho experimental
+# Experimental Design
 
-Assim como em RNA-seq, o desenho experimental é fundamental para experimentos de ATAC-seq.
+As with RNA-seq, experimental design is critical for ATAC-seq experiments.
 
-### Conceitos importantes
+### Important Concepts
 
-- réplicas biológicas
-- qualidade nuclear
-- número de células
-- batch effects
-- profundidade de sequenciamento
+* biological replicates
+* nuclear quality
+* number of cells
+* batch effects
+* sequencing depth
 
-### Considerações importantes
+## Important Considerations
 
-ATAC-seq é particularmente sensível à:
+ATAC-seq is particularly sensitive to:
 
-- degradação celular
-- lise excessiva
-- contaminação mitocondrial
-- baixa qualidade nuclear
+* cellular degradation
+* excessive lysis
+* mitochondrial contamination
+* poor nuclear quality
 
 ---
 
-## Particularidades de ATAC-seq
+# Characteristics of ATAC-seq Data
 
-Em ATAC-seq:
+In ATAC-seq:
 
-- fragmentos curtos geralmente correspondem a regiões nucleosome-free
-- fragmentos maiores podem refletir posicionamento nucleossomal
-- reads mitocondriais frequentemente são abundantes
+* short fragments typically correspond to nucleosome-free regions
+* larger fragments may reflect nucleosome positioning
+* mitochondrial reads are often abundant
 
-### Distribuição do tamanho dos fragmentos
+## Fragment Size Distribution
 
-Uma das métricas mais características de ATAC-seq.
+One of the most characteristic quality metrics of ATAC-seq.
 
-Fragmentos pequenos geralmente correspondem a regiões abertas livres de nucleossomos.
+Small fragments generally correspond to open chromatin regions free of nucleosomes.
 
-Fragmentos maiores podem refletir:
+Larger fragments may reflect:
 
-- mono-nucleossomos
-- di-nucleossomos
-- organização da cromatina
+* mono-nucleosomes
+* di-nucleosomes
+* higher-order chromatin organization
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/fragment_distribution.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 3. Distribuição de fragmentos em ATAC-seq. Fonte: https://www.activemotif.com/blog-library-qc </em>
+<em>Figure 3. Fragment size distribution in ATAC-seq. Source: https://www.activemotif.com/blog-library-qc</em>
 </p>
 
 ---
 
-## Visão geral do workflow de ATAC-seq
+# Overview of the ATAC-seq Workflow
 
-Um experimento típico de ATAC-seq envolve várias etapas computacionais.
+A typical ATAC-seq experiment involves several computational steps.
 
-### Fluxo geral
+## General Workflow
 
 <div align="center">
 <img src="/genomics-course-usp2026/assets/images/atacseq_workflow.png" width="700">
 </div>
 
 <p align="center">
-<em>Figura 4. Visão geral de um workflow típico de ATAC-seq. </em>
+<em>Figure 4. Overview of a typical ATAC-seq workflow.</em>
 </p>
 
 ---
 
-## Reads e arquivos FASTQ
+# Reads and FASTQ Files
 
-Assim como em RNA-seq, o sequenciamento gera arquivos FASTQ contendo reads de DNA.
+As in RNA-seq, sequencing generates FASTQ files containing DNA reads.
 
-Cada read representa um fragmento de DNA acessível identificado pela transposase Tn5.
-
-## Controle de qualidade
-
-O controle de qualidade em ATAC-seq é essencial para avaliar:
-
-- enriquecimento em regiões abertas
-- qualidade da biblioteca
-- sinal versus ruído
-
-Ferramentas comuns incluem:
-
-- FastQC
-- MultiQC
-- deepTools
+Each read represents an accessible DNA fragment identified by the Tn5 transposase.
 
 ---
 
-## Métricas importantes em ATAC-seq
+# Quality Control
 
-### Qualidade dos reads
+Quality control is essential for evaluating:
 
-Avalia:
+* enrichment in open chromatin regions
+* library quality
+* signal-to-noise ratio
 
-- qualidade por base
-- conteúdo GC
-- adaptadores
-- duplicação
+Common tools include:
 
----
-
-### Taxa de alinhamento
-
-Mede quantos reads alinham corretamente ao genoma de referência.
-
-Baixas taxas podem indicar:
-
-- contaminação
-- baixa qualidade
-- problemas na biblioteca
+* FastQC
+* MultiQC
+* deepTools
 
 ---
 
-### Reads mitocondriais
+# Important ATAC-seq Metrics
 
-ATAC-seq frequentemente gera muitos reads derivados de DNA mitocondrial.
+## Read Quality
 
-Altas proporções de reads mitocondriais podem indicar:
+Evaluates:
 
-- lise excessiva
-- baixa qualidade nuclear
-
----
-
-## Alinhamento
-
-Após a etapa de QC, os reads são alinhados ao genoma de referência.
-
-Ferramentas comuns incluem:
-
-| Ferramenta | Características |
-|---|---|
-| Bowtie2 | amplamente utilizado em ATAC-seq |
-| BWA | eficiente para reads curtos |
-
-O objetivo é determinar a posição genômica dos fragmentos acessíveis.
-
-### Arquivos BAM
-
-Após o alinhamento, os reads são armazenados em arquivos BAM contendo:
-
-- posição genômica
-- orientação
-- qualidade do alinhamento
-- informações de pareamento
+* per-base quality
+* GC content
+* adapter contamination
+* duplication levels
 
 ---
 
-## Remoção de duplicatas
+## Alignment Rate
 
-Durante PCR, fragmentos podem ser amplificados excessivamente. Como estamos tratando de DNA e não mais de RNA, em que uma mesma molécula de RNA biologicamente tem muitas cópias, precisamos limpar duplicatas geradas pela técnica.
+Measures how many reads align correctly to the reference genome.
 
-Reads duplicados podem inflar artificialmente o sinal.
+Low alignment rates may indicate:
 
-Ferramentas comuns incluem:
-
-- samtools
-- Picard
+* contamination
+* poor sequencing quality
+* library preparation issues
 
 ---
 
-## Peak calling
+## Mitochondrial Reads
 
-Uma das etapas centrais de ATAC-seq.
+ATAC-seq frequently generates a large proportion of reads derived from mitochondrial DNA.
 
-O objetivo do peak calling é identificar regiões do genoma com enriquecimento significativo de reads.
+High proportions of mitochondrial reads may indicate:
 
-Essas regiões representam potenciais elementos regulatórios acessíveis.
+* excessive cell lysis
+* poor nuclear quality
 
-### Ferramentas comuns
+---
 
-| Ferramenta | Características |
-|---|---|
-| MACS2/MACS3 | padrão mais utilizado |
-| Genrich | otimizado para ATAC-seq |
+# Alignment
 
-### Conceito de peak
+After quality control, reads are aligned to a reference genome.
 
-Um peak representa:
+Common tools include:
+
+| Tool    | Characteristics           |
+| ------- | ------------------------- |
+| Bowtie2 | Widely used for ATAC-seq  |
+| BWA     | Efficient for short reads |
+
+The goal is to determine the genomic position of accessible fragments.
+
+## BAM Files
+
+After alignment, reads are stored in BAM files containing:
+
+* genomic coordinates
+* orientation
+* alignment quality
+* paired-end information
+
+---
+
+# Duplicate Removal
+
+During PCR amplification, fragments may be over-amplified.
+
+Because ATAC-seq analyzes DNA rather than RNA, duplicated fragments are often technical artifacts rather than biological signals.
+
+Duplicate reads can artificially inflate the signal.
+
+Common tools include:
+
+* samtools
+* Picard
+
+---
+
+# Peak Calling
+
+One of the central steps of ATAC-seq analysis.
+
+The goal of peak calling is to identify genomic regions with significant enrichment of sequencing reads.
+
+These regions represent potentially accessible regulatory elements.
+
+## Common Tools
+
+| Tool        | Characteristics           |
+| ----------- | ------------------------- |
+| MACS2/MACS3 | Most widely used standard |
+| Genrich     | Optimized for ATAC-seq    |
+
+## Peak Concept
+
+A peak represents:
 
 ```text
-alta densidade local de fragmentos
-→ maior acessibilidade cromatínica
+high local fragment density
+→ increased chromatin accessibility
 ```
 
 <div align="center">
@@ -257,85 +261,83 @@ alta densidade local de fragmentos
 </div>
 
 <p align="center">
-<em>Figura 4. Exemplo de identificação de peaks em ATAC-seq. Fonte: https://www.nature.com/articles/s41467-025-67491-0</em>
+<em>Figure 5. Example of peak identification in ATAC-seq. Source: https://www.nature.com/articles/s41467-025-67491-0</em>
 </p>
 
 ---
 
-## Quantificação de acessibilidade
+# Accessibility Quantification
 
-Após identificar os peaks, é possível quantificar acessibilidade da cromatina entre amostras.
+After peaks have been identified, chromatin accessibility can be quantified across samples.
 
-O resultado geralmente é uma matriz:
+The result is typically a matrix:
 
-| Peak | Sample_1 | Sample_2 |
-|---|---|---|
-| chr1:1-100 | 120 | 340 |
-| chr2:200-300 | 540 | 210 |
+| Peak         | Sample_1 | Sample_2 |
+| ------------ | -------- | -------- |
+| chr1:1-100   | 120      | 340      |
+| chr2:200-300 | 540      | 210      |
 
-Nessa matriz:
+In this matrix:
 
-- linhas representam regiões acessíveis
-- colunas representam amostras
-- valores representam abundância de fragmentos
-
----
-
-## Normalização
-
-Assim como em RNA-seq, contagens brutas de ATAC-seq não são diretamente comparáveis entre amostras.
-
-Diferenças técnicas podem surgir devido a:
-
-- profundidade de sequenciamento
-- eficiência da transposição
-- composição da biblioteca
-- proporção de reads mitocondriais
-- número total de peaks detectados
-
-A normalização busca corrigir essas diferenças para permitir comparações biológicas mais confiáveis.
-
-### Abordagens comuns
-
-| Método | Objetivo |
-|---|---|
-| CPM | corrigir profundidade de sequenciamento |
-| TMM | normalização robusta entre amostras |
-| DESeq2 size factors | modelagem estatística de contagens |
-
-Após normalização, as matrizes podem ser utilizadas em análises downstream como:
-
-- PCA
-- clustering
-- acessibilidade diferencial
-- heatmaps
+* rows represent accessible regions
+* columns represent samples
+* values represent fragment abundance
 
 ---
 
-## Acessibilidade diferencial
+# Normalization
 
-ATAC-seq pode ser utilizado para identificar regiões diferencialmente acessíveis entre condições.
+As in RNA-seq, raw ATAC-seq counts are not directly comparable between samples.
 
-Essas análises permitem investigar:
+Technical differences may arise due to:
 
-- ativação regulatória
-- remodelamento cromatínico
-- mudanças epigenéticas
+* sequencing depth
+* transposition efficiency
+* library composition
+* proportion of mitochondrial reads
+* total number of detected peaks
 
-Ferramentas comuns incluem:
+Normalization aims to correct these differences and enable more reliable biological comparisons.
 
-- DESeq2
-- edgeR
-- DiffBind
+## Common Approaches
+
+| Method              | Purpose                              |
+| ------------------- | ------------------------------------ |
+| CPM                 | Correct sequencing depth             |
+| TMM                 | Robust normalization between samples |
+| DESeq2 size factors | Statistical modeling of count data   |
+
+After normalization, accessibility matrices can be used for downstream analyses such as:
+
+* PCA
+* clustering
+* differential accessibility analysis
+* heatmaps
 
 ---
 
-## Limitações de ATAC-seq
+# Differential Accessibility
 
-### Algumas limitações incluem:
+ATAC-seq can be used to identify differentially accessible regions between conditions.
 
-- não mede ligação direta de proteínas
-- acessibilidade não implica atividade funcional
-- regiões repetitivas dificultam alinhamento
-- sensível à qualidade celular
-- resolução limitada em populações heterogêneas
+These analyses allow researchers to investigate:
+
+* regulatory activation
+* chromatin remodeling
+* epigenetic changes
+
+Common tools include:
+
+* DESeq2
+* edgeR
+* DiffBind
+
+---
+
+# Limitations of ATAC-seq
+
+* does not directly measure protein binding
+* accessibility does not necessarily imply functional activity
+* repetitive regions can complicate alignment
+* highly sensitive to sample quality
+* limited resolution in heterogeneous cell populations

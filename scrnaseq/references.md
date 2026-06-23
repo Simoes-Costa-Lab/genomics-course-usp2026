@@ -20,6 +20,10 @@ The practical exercises in this module use the publicly available PBMC dataset g
 
 ---
 
+# Scripts for this module
+
+---
+
 # Tutorials
 
 ### Seurat PBMC Tutorial

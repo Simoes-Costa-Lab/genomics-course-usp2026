@@ -1,35 +1,34 @@
 ---
 title: CUT&RUN
-nav_order: 4
+nav_order: 5
 has_children: true
 ---
 
 # CUT&RUN
 
-Este módulo apresenta a análise de dados de **CUT&RUN**, uma técnica utilizada para mapear **interações entre proteínas e DNA** no genoma.
+This module introduces the analysis of **CUT&RUN** data, a technique used to map **protein–DNA interactions** across the genome.
 
-CUT&RUN é frequentemente usado para identificar **regiões de ligação de fatores de transcrição ou modificações de histonas**.
+CUT&RUN is commonly used to identify **transcription factor binding sites and histone modifications**.
 
-## Objetivos do módulo
+## Learning Objectives
 
-Ao final deste módulo, os participantes deverão ser capazes de:
+By the end of this module, participants will be able to:
 
-- compreender o princípio experimental do CUT&RUN
-- interpretar perfis genômicos de ligação proteína‑DNA
-- reconhecer as etapas principais da análise computacional
-- explorar dados genômicos de fatores regulatórios
+- understand the experimental principles of CUT&RUN
+- interpret genome-wide protein–DNA binding profiles
+- recognize the major steps of the computational analysis workflow
+- explore genomic datasets associated with regulatory factors
 
-## Estrutura do módulo
+## Module Structure
 
-- [Teoria](./theory) – princípios de regulação epigenética e ligação proteína‑DNA  
-- [Sessão prática](./practical) – análise guiada de dados de CUT&RUN  
-- [Exercícios](./exercises) – atividades para interpretação dos resultados  
-- [Referências](./references) – leituras adicionais
+- [Theory](./theory) – principles of epigenetic regulation and protein–DNA interactions
+- [Practical Session](./practical) – guided analysis of CUT&RUN data
+- [References](./references) – additional readings and resources
 
-## Conteúdo abordado
+## Topics Covered
 
-- mapeamento de regiões de ligação de proteínas  
-- identificação de picos genômicos  
-- anotação de regiões regulatórias  
-- integração com dados de expressão gênica  
-- interpretação de perfis regulatórios
+- mapping protein binding regions
+- identification of genomic peaks
+- annotation of regulatory regions
+- integration with gene expression data
+- interpretation of regulatory profiles

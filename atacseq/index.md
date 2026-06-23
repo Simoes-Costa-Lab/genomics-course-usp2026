@@ -1,35 +1,34 @@
 ---
 title: ATAC-seq
-nav_order: 3
+nav_order: 4
 has_children: true
 ---
 
 # ATAC-seq
 
-Este módulo introduz a análise de **ATAC-seq**, uma técnica utilizada para identificar **regiões de cromatina acessível** no genoma.
+This module introduces **ATAC-seq**, a technique used to identify **accessible chromatin regions** across the genome.
 
-Dados de ATAC-seq permitem investigar elementos regulatórios como **promotores, enhancers e regiões de ligação de fatores de transcrição**.
+ATAC-seq data can be used to investigate regulatory elements such as **promoters, enhancers, and transcription factor binding sites**.
 
-## Objetivos do módulo
+## Learning Objectives
 
-Ao final deste módulo, os participantes deverão ser capazes de:
+By the end of this module, participants will be able to:
 
-- compreender o princípio experimental do ATAC-seq
-- interpretar perfis de acessibilidade cromatínica
-- entender as principais etapas da análise computacional
-- explorar dados de acessibilidade genômica
+- understand the experimental principles of ATAC-seq
+- interpret chromatin accessibility profiles
+- understand the major steps of the computational analysis workflow
+- explore genome-wide chromatin accessibility data
 
-## Estrutura do módulo
+## Module Structure
 
-- [Teoria](./theory) – fundamentos de acessibilidade cromatínica e regulação gênica  
-- [Sessão prática](./practical) – exploração de dados de ATAC-seq  
-- [Exercícios](./exercises) – atividades práticas com os dados  
-- [Referências](./references) – leituras e recursos adicionais
+- [Theory](./theory) – fundamentals of chromatin accessibility and gene regulation
+- [Practical Session](./practical) – exploration of ATAC-seq data
+- [References](./references) – additional readings and resources
 
-## Conteúdo abordado
+## Topics Covered
 
-- acessibilidade da cromatina  
-- identificação de picos de ATAC-seq  
-- anotação de regiões regulatórias  
-- integração com dados de expressão gênica  
-- visualização de regiões regulatórias
+- chromatin accessibility
+- identification of ATAC-seq peaks
+- annotation of regulatory regions
+- integration with gene expression data
+- visualization of regulatory elements
