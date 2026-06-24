@@ -1,5 +1,5 @@
 ---
-title: Conepts and Techniques
+title: Concepts and Techniques
 subtitle: "Introduction to R"
 layout: home
 nav_order: 2

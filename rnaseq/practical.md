@@ -6,79 +6,68 @@ nav_order: 2
 
 # Practical Session
 
-In this practical session, we will analyze a real single-cell RNA-seq dataset using the **Seurat** package in R.
+In this practical session, we will analyze a real RNA-seq dataset using the **edegR** package in R.
 
-Our goal is to follow a typical scRNA-seq workflow, starting from a count matrix and ending with the identification of distinct cell populations.
+Our goal is to follow a typical differential RNA-seq workflow, starting from a count matrix and ending with the identification of genes that are differentially expressed between conditions.
 
 # Learning Objectives
 
 By the end of this session, participants will be able to:
 
-- load and inspect a single-cell RNA-seq dataset
+- load and inspect a RNA-seq dataset
 - perform basic quality control
+- generate low-dimensional representations of samples
 - normalize expression data
-- identify highly variable genes
-- generate low-dimensional representations of cells
-- perform clustering analysis
-- identify marker genes
-- annotate cell populations
+- identify differentially expressed genes
 
-# Dataset
+# About this Data
 
-The dataset used in this exercise is the **10k Peripheral Blood Mononuclear Cells (PBMC)** dataset generated using the 10x Genomics platform.
+The dataset used in this exercise is a published dataset from this publication: [BRD4 binds to active cranial neural crest enhancers to regulate RUNX2 activity during osteoblast differentiation](https://pubmed.ncbi.nlm.nih.gov/38063851/) by Musa et al. in Development (2024). 
+
+In this study, the authors characterized the cellular and molecular function of the gene BRD4 for craniofacial development. Of all the data they generated, we are particularly interested in the osteogenic differentiation of a cell line called O9-1. This is a cranial neural crest cell that can be differentiated into osteoblast. Since they conducted differentiation in wild type cell lines, we have 3 replicates of the most important time points.
+
+	
+|id|sample|timepoint|
+|------|------|----------|
+|D0_WT_1|D0_WT_1|D0|
+|D0_WT_2|D0_WT_2|D0|
+|D0_WT_3|D0_WT_3|D0|
+|D3_OST_WT_1|D3_OST_WT_1|D3|
+|D3_OST_WT_2|D3_OST_WT_2|D3|
+|D3_OST_WT_3|D3_OST_WT_3|D3|
+|D6_OST_WT_1|D6_OST_WT_1|D6|
+|D6_OST_WT_2|D6_OST_WT_2|D6|
+|D6_OST_WT_3|D6_OST_WT_3|D6|
 
 # Workflow Overview
 
 <div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna_workflow_class.png" width="500">
+<img src="/genomics-course-usp2026/assets/images/rnaseq_bioinfo.png" width="500">
 </div>
 
 <p align="center">
-<em>Figure 1. Overview of the single-cell RNA-seq workflow. Source: https://hbctraining.github.io/Intro-to-scRNAseq/lessons/08_integration_cca_theory.html </em>
+<em>Figure 1. Overview of the RNA-seq workflow. Source: https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/ </em>
 </p>
-
-# About this Data
-
-Before jumping into the data analysis, we need to have the biological context for this dataset. Here are the most relevant metadata for this dataset:
-
-- The libraries were prepared using Chromium Next GEM Single Cell 3ʹ Reagent Kits v3.1
-- The samples were sequenced on the Illumina NovaSeq 6000
-- Peripheral Blood Mononuclear Cells (PBMC) samples from a healthy donor.
-
-Since this sample is PBMCs, we will expect immune cells, such as:
-
-- B cells
-- T cells
-- NK cells
-- monocytes
-- macrophages
-- possibly megakaryocytes
-
-Before any data analysis, this is the most important information you have to keep in mind: is this a healthy sample? If yes, what cell types were already characterized for this tissue? If not, what disease is this? Immune disease? Tumor? Diabetes? What disease markers are expected? This will save you time and tell you right away if you have a quality dataset or not.
-
-In this particular dataset, none of the above cell types are expected to be low complexity or anticipated to have high mitochondrial content.
 
 # Step 1 — Loading Packages
 
 ```r
-library(Seurat)
+library(edgeR)
 library(tidyverse)
-library(patchwork)
-library(dplyr)
+library(pheatmap)
+library(ggrepel)
 ```
 
 # Step 2 — Set input and output paths
 
 ```r
 # Set path. It's useful to do it at the beginning, so you don't have to rewrite file paths again and again
-DATA_DIR <- "/course/shared/scrnaseq/data/raw"
+DATA_DIR <- "/course/shared/rnaseq/data/"
 
-H5_FILE <- file.path(
-  DATA_DIR,
-  "SC3_v3_NextGem_SI_PBMC_10K_filtered_feature_bc_matrix.h5"
-)
+COUNTS_FILE <- file.path(DATA_DIR, "counts/joint_withpairs_featureCounts.txt")
+GENE_ANNOT_FILE <- file.path(DATA_DIR, "geneid2genename.txt")
 
-OUTDIR <- "~/scrnaseq/"
+OUTDIR <- "~/rnaseq/"
 
 dir.create(OUTDIR, showWarnings = FALSE)
 ```
@@ -86,695 +75,607 @@ dir.create(OUTDIR, showWarnings = FALSE)
 # Step 3 — Loading Data
 
 ```r
-counts <- Read10X_h5(H5_FILE)
-
-pbmc <- CreateSeuratObject(
-  counts = counts,
-  project = "PBMC10K",
-  min.cells = 3,
-  min.features = 200
+# featureCounts files contain comment lines starting with "#".
+# comment.char = "#" tells R to skip those lines.
+fc <- read.delim(
+  COUNTS_FILE,
+  comment.char = "#",
+  check.names = FALSE
 )
 
-# min.cells: exclude feature (genes) expressed in less than 3 cells
-# min.features: exclude cells with less than 200 genes (features) expressed
+# Select only count columns.
+# These are the columns ending with ".bam".
+count_cols <- grep(".bam$", colnames(fc), value = TRUE)
+
+counts <- fc[, count_cols]
+
+# Use gene IDs as row names.
+rownames(counts) <- fc$Geneid
+
+# Clean sample names to make them easier to read.
+colnames(counts) <- colnames(counts) |>
+  str_replace(".mm39.bam", "") |>
+  str_replace("RNAseq_NCC_", "")
 ```
 
-#  About the Seurat Object
- 
-For bioinformatics, when we start to work with single cell, this might be the first time you've seen this type of data format. Don't panic!
+# Step 4 — Make/Read metadata
 
-The idea here is that all information related to your single cell can be accessed from one object, instead of scattered around and you running the risk of loosing it. 
- 
- In a nutshell, Seurat object is an R S4 object which allows us to store single-cell data in R. 
-
-The key slots in a Seurat object are:
-
-- assays: This slot stores the raw and processed data in different forms. It is a list of Assay objects, each representing a specific type of data.  Examples: RNA, SCT, etc. 
-
-- meta.data: A data.frame containing metadata associated with each cell. This can include cell type annotations, experimental conditions, or other variables related to the cells. Example columns: cell_type, batch, condition, cluster.
-
-- reductions: A list of dimensionality reductions applied to the data. These are used for visualizations like PCA, t-SNE, or UMAP. Examples: pca, tsne, umap.
-
-- graphs: A list of graphs (usually a nearest-neighbor graph) that are used for clustering and other analyses.  Examples: RNA_snn (a shared nearest-neighbor graph for RNA-seq data), pca_snn.
-
-- clusters: This stores the cluster assignments for each cell after a clustering analysis (e.g., Louvain or Leiden clustering). It is typically stored in the meta.data slot but can also be stored in a separate slot.
-
-- commands: A record of the commands used to generate the object. 
-
-- misc: This slot is used to store arbitrary information that doesn’t fit into the other slots.
-
-When working with single cell, the calculation can take a long time, so it's very useful to be able to do it once, save it into a new object and pull it again for other scripts.
-
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/seurat_obj.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 2. What's inside a Seurat Object. Source: https://biostatsquid.com/ </em>
-</p>
+Up until now we have loaded a gene expression matrix, where each column is a sample and each row is a gene. To be able to do a differential expression analysis, we need to create a metadata table, so that edegR can group samples of the same condition. Here, our sample name already tells us everything we need, so simple parsing using R is enough. However, I would recommend you to build a metadata csv file to be sure your sample id match the condition, and then just read it into your R script. 
 
 ```r
-#Inspect Object
-pbmc
-```
-
-```
-An object of class Seurat 
-22860 features across 10884 samples within 1 assay 
-Active assay: RNA (22860 features, 0 variable features)
- 1 layer present: counts
-```
-
-```r
-#Inspect slots
-slotNames(pbmc)
-```
-
-```
- [1] "assays"       "meta.data"    "active.assay" "active.ident" "graphs"      
- [6] "neighbors"    "reductions"   "images"       "project.name" "misc"        
-[11] "version"      "commands"     "tools"    
-```
-
-```r
-#Inspect meta data
-head(pbmc@meta.data)
-```
-
-```
-                   orig.ident nCount_RNA nFeature_RNA
-AAACCCAGTATATGGA-1    PBMC10K        886          343
-AAACCCAGTATCGTAC-1    PBMC10K       1628          749
-AAACCCAGTCGGTGAA-1    PBMC10K       6590         1867
-AAACCCAGTTAGAAAC-1    PBMC10K      17318         3809
-AAACCCAGTTATCTTC-1    PBMC10K       3526         1516
-AAACCCAGTTGCCGAC-1    PBMC10K       6228         2110
-```
-
-```r
-#Inspect data dimensions
-dim(pbmc)
-```
-
-```
-[1] 22860 10884
-```
-
-```r
-#Inspect genes
-head(rownames(pbmc))
-```
-
-```
-[1] "AL627309.1" "AL627309.3" "AL627309.5" "AL627309.4" "AL669831.2" "LINC01409" 
-```
-
-```r
-#Inspect cells
-head(colnames(pbmc))
-```
-
-```
-[1] "AAACCCAGTATATGGA-1" "AAACCCAGTATCGTAC-1" "AAACCCAGTCGGTGAA-1"
-[4] "AAACCCAGTTAGAAAC-1" "AAACCCAGTTATCTTC-1" "AAACCCAGTTGCCGAC-1"
-```
-
-```r
-#Inspect assays
-Assays(pbmc)
-```
-
-```
-[1] "RNA"
-```
-
-```r
-#Inspect RNA assay
-pbmc[["RNA"]]
-```
-
-```
-Assay (v5) data with 22860 features for 10884 cells
-First 10 features:
- AL627309.1, AL627309.3, AL627309.5, AL627309.4, AL669831.2, LINC01409,
-FAM87B, LINC01128, LINC00115, FAM41C 
-Layers:
- counts 
-```
-
-# Step 3 — Quality Control
-
-```r
-#Calculate Mt content
-#Beware: this only works with human genome annotation!
-#For other species: filter genes annotated in the mitochondrial chromosome, 
-#save it to a file or vector, and use  the "features" argument to calculate de mitocondrial content correctly
-pbmc[["percent.mt"]] <- PercentageFeatureSet(
-  pbmc,
-  pattern = "^MT-"
-)
-```
-
-```r
-VlnPlot(
-  pbmc,
-  features = c(
-    "nFeature_RNA",
-    "nCount_RNA",
-    "percent.mt"
-  ),
-  ncol = 3
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 3. Violin Plots. Each dot is one of the cells in our dataset. What is the overall quality of the data? </em>
-</p>
-
-</details>
-
-
-```r
-FeatureScatter(
-  pbmc,
-  feature1 = "nCount_RNA",
-  feature2 = "percent.mt"
-)
-```
-
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot01.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 4. Scatter plot of RNA count per cell vs MT content. What pattern do you see? </em>
-</p>
-
-</details>
-
-
-```r
-FeatureScatter(
-  pbmc,
-  feature1 = "nCount_RNA",
-  feature2 = "percent.mt"
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot02.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 5. Scatter plot of RNA count and RNA feature What does this tell us about the quality? </em>
-</p>
-
-</details>
-
-
-# Step 4 — Filtering Cells
-
-```r
-#Filter Based on QC
-pbmc <- subset(
-  pbmc,
-  subset =
-    nFeature_RNA > 300 &
-    nFeature_RNA < 5000 &
-    percent.mt < 10
-)
-
-#Verify dims
-pbmc
-
-dim(pbmc)
-```
-
-How many cells did we eliminate? Why did we choose these thresholds?
-
-# Step 5— Data Normalization
-
-```r
-#To remove technical variations, sequencing depth and variance amongst our cells, we log normalize our counts 
-pbmc <- NormalizeData(
-  pbmc,
-  normalization.method = "LogNormalize",
-  scale.factor = 10000
-)
-```
-
-# Step 6 — Identifying Highly Variable Genes
-
-```r
-#Find Highly Variable Genes
-pbmc <- FindVariableFeatures(
-  pbmc,
-  selection.method = "vst",
-  nfeatures = 2000
-)
-
-#Visualize
-plot1 = VariableFeaturePlot(pbmc)
-
-top10 <- head(VariableFeatures(pbmc), 10)
-
-top10
-
-LabelPoints(plot = plot1, points = top10, repel = TRUE)
-
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot03.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 6. Scatter Plot of Average Expression versus Standardized Variance. What could you tell about this scattering? What type of genes are the most variable? </em>
-</p>
-
-</details>
-
-
-  <details>
-<summary>Click to reveal table</summary>
-
-<table>
-<thead>
-<tr>
-<th>Gene</th>
-<th>Biological Function</th>
-<th>Likely Cell Type</th>
-</tr>
-</thead>
-<tbody>
-<tr><td><b>IGLC1</b></td><td>Immunoglobulin lambda constant 1</td><td>B cells / Plasma cells</td></tr>
-<tr><td><b>IGLC3</b></td><td>Immunoglobulin lambda constant 3</td><td>B cells / Plasma cells</td></tr>
-<tr><td><b>CXCL10</b></td><td>Interferon-induced inflammatory chemokine</td><td>Activated immune cells / Interferon-responsive cells</td></tr>
-<tr><td><b>PTGDS</b></td><td>Prostaglandin D2 synthase</td><td>Dendritic cells / pDCs</td></tr>
-<tr><td><b>GZMB</b></td><td>Granzyme B</td><td>Cytotoxic NK cells</td></tr>
-<tr><td><b>JCHAIN</b></td><td>Joining chain of IgA and IgM antibodies</td><td>Plasmablasts / Plasma cells</td></tr>
-<tr><td><b>CDKN1C</b></td><td>Cell cycle inhibitor</td><td>Monocyte/DC subsets</td></tr>
-<tr><td><b>GNLY</b></td><td>Granulysin</td><td>NK cells</td></tr>
-<tr><td><b>MZB1</b></td><td>Antibody secretion chaperone</td><td>Plasmablasts</td></tr>
-<tr><td><b>LILRA4</b></td><td>Leukocyte immunoglobulin-like receptor A4</td><td>Plasmacytoid dendritic cells (pDCs)</td></tr>
-</tbody>
-</table>
-
-</details>
-
-
-Why identify highly variable genes? For huge datasets, this step can cut off a lot of memory usage in downstream calculations. This is also a good time to check the quality of the data. Ask yourself: What kind of genes appear here? Do they have biological relevance? Or is it ribosomal or mitochondrial genes? If that's the case, this is a good time to go back and review your QC: you might have been afraid of "losing" cells, but kept all the bad apples.
-
-# Step 7 — Principal Component Analysis (PCA)
-
-Principal Components Analysis is a dimensionality-reduction method employed to stratify data by their variance. In other words, points that are more closely together on a PCA are more similar to each other, while points that are more dissimilar to each other will be further apart. 
-
-This is very useful in any transcriptomic data, where you have the expression value for every gene in multiple or thousands of samples/cells. We are talking about 25,000 or more genes expressed. It would be very laborious to try and plot all possible combinations of two genes to extract any information at all of how similar two samples or cells are. Luckily, we don't have to suffer what others have suffered before and resolved already: we can use PCA to extract this information.
-
-```r
-all.genes <- rownames(pbmc)
-
-pbmc <- ScaleData(
-  pbmc,
-  features = all.genes
-)
-
-pbmc <- RunPCA(
-  pbmc,
-  features = VariableFeatures(pbmc)
-)
-
-#Visualize
-DimPlot(
-  pbmc,
-  reduction = "pca"
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot10.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 7. Dimesion plot of the first 2 PCs </em>
-</p>
-
-</details>
-
-```r
-ElbowPlot(pbmc)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot04.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 8. Elbow Plot: how much each PC represents the data (in percentage) </em>
-</p>
-
-</details>
-
-# Step 8 — UMAP Visualization
-
-As you can see from our previous plot, each PC can only explain so much about the data at a time. A way to try and use as much information as possible to cluster our cells is to employ an Uniform Manifold Approximation and Projection (UMAP). While PCA will determine all PCs, we can only plot two at a time. In contrast, UMAP will take the information from any number of top PCs to arrange the cells in this multidimensional space. 
-
-```r
-#Calculate UMAP
-pbmc <- RunUMAP(
-  pbmc,
-  dims = 1:20
-)
-
-#Visualize
-DimPlot(
-  pbmc,
-  reduction = "umap"
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot05.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 8. UMAP calculated using 20 PCs </em>
-</p>
-
-</details>
-
-# Step 9 — Cell Clustering
-
-Now that we have our UMAP, we will use Seurat's graph-based clustering approach using a K-nearest neighbor to from our clusters based on distance between dots, which here is a proxy for similarity of the transcriptome of the cells.
-
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/clustering_example.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 9. Schematic representation of K-nearest neighbor–based clustering for single-cell RNA-seq data. source: https://hbctraining.github.io/Intro-to-scRNAseq/lessons/10_clustering_cells_SCT.html </em>
-</p>
-
-```r
-#Calculate Clusters
-pbmc <- FindNeighbors(
-  pbmc,
-  dims = 1:20
-)
-
-pbmc <- FindClusters(
-  pbmc,
-  resolution = 0.5
-)
-
-DimPlot(
-  pbmc,
-  reduction = "umap",
-  label = TRUE
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot06.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 10. UMAP with calculated  clusters </em>
-</p>
-
-</details>
-
-# Saving
-
-Before moving on, this is a great time to save your processed object:
-
-```r
-#Save Clustered Data
-saveRDS(
-  pbmc,
-  file.path(
-    OUTDIR,
-    "pbmc_clustered.rds"
+# Make metadata
+sample_info <- data.frame(
+  sample = colnames(counts),
+  timepoint = case_when(
+    str_detect(colnames(counts), "D0") ~ "D0",
+    str_detect(colnames(counts), "D3") ~ "D3",
+    str_detect(colnames(counts), "D6") ~ "D6"
   )
 )
+
+# Set D0 as the reference level.
+sample_info$timepoint <- factor(
+  sample_info$timepoint,
+  levels = c("D0", "D3", "D6")
+)
+
+rownames(sample_info) <- sample_info$sample
 ```
 
-This object now can be read in another scripts using the follow command:
+Now we can check our metadata and save it for future reference:
 
 ```r
-#Open RDS object
+# Check
+print(sample_info)
 
-DATA_DIR <- "~/scrnaseq/"
-
-RDS_FILE <- file.path(
-  DATA_DIR,
-  "pbmc_clustered.rds"
-)
-
-pbmc_processed  = readRDS(
-  file.path(
-    OUTDIR,
-    "pbmc_clustered.rds"
-  )
-)
-```
-
-Remember you can do this at any step! I highly recommend it after filtering and after UMAP+clustering. Save your future self the trouble of having to rerun a complete qc/filtering/normalization/pca/umap anytime you want to do a simple feature plot. This will also help your results to be more consistent and reproducible.
-
-# Step 10 — Identifying Marker Genes
-
-```r
-markers <- FindAllMarkers(
-  pbmc,
-  only.pos = TRUE,
-  min.pct = 0.25,
-  logfc.threshold = 0.25
-)
-
-#Select top10 markers per cluster
-top10 <- markers %>%
-  group_by(cluster) %>%
-  slice_max(avg_log2FC, n = 10)
-
-#Inspect
-head(top10)
-
-#Save to CSV
 write.csv(
-  markers,
-  file.path(
-    OUTDIR,
-    "cluster_markers.csv"
-  ),
+  sample_info,
+  file.path(OUTDIR, "metadata.csv"),
   row.names = FALSE
 )
 ```
 
-Here I also recommend saving the csv file for easiness of analysis downstream. This will make your following scripts run faster. The csv file can be easily manipulated outside R.
+# Step 3 — Differential Expression Analysis with edgeR
 
-# Step 11 — Cell Type Annotation
+The goal of this analysis is to identify genes whose expression changes during osteoblast differentiation. Our experiment contains three developmental stages with three biological replicates each:
 
-## Explore some known marker
+* **D0**: Neural crest cells
+* **D3**: Early osteoblast differentiation
+* **D6**: Late osteoblast differentiation
+
+## Define Experimental Groups
+
+First, we specify the experimental condition associated with each sample. This information will be used throughout the analysis to compare gene expression between time points.
 
 ```r
-FeaturePlot(pbmc, features = "MS4A1")
+group <- sample_info$timepoint
 ```
 
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot07.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 11. UMAP showing expression of Gene MS4A1 </em>
-</p>
-
-</details>
+## Create an edgeR Object
 
 ```r
-FeaturePlot(pbmc, features = "CD3D")
-FeaturePlot(pbmc, features = "NKG7")
-FeaturePlot(pbmc, features = "LYZ")
+y <- DGEList(
+  counts = counts,
+  group = group
+)
 ```
 
-## Explore top markers per cluster
+The count matrix is stored inside a `DGEList` object.This object contains:
+
+* the raw count matrix
+* sample information
+* normalization factors
+* statistical parameters estimated during the analysis
+
+
+
+## Filter Lowly Expressed Genes
+
+Genes with extremely low expression provide little statistical power and can increase noise.
 
 ```r
-# Let's use our top markers to infer cell identity
-top5 <- markers %>%
-  group_by(cluster) %>%
-  slice_max(avg_log2FC, n = 5) %>%
-  ungroup()
+keep <- filterByExpr(y, group = group)
 
-DoHeatmap(
-  pbmc,
-  features = unique(top5$gene),
-  size = 3
+y <- y[keep, , keep.lib.sizes = FALSE]
+```
+
+## Normalize Sequencing Depth
+
+Different samples often have different library sizes. edgeR uses the **TMM (Trimmed Mean of M-values)** method to estimate normalization factors. This allows gene expression levels to be compared more fairly across samples.
+
+```r
+y <- calcNormFactors(y)
+```
+
+# Principal Component Analysis (PCA)
+
+Now that we have normalized our data, this is a great point to stop and inspect our samples. Before doing complex calculations we can have a general sense of similarity/differences between samples using Principal Components Analysis: a dimensionality-reduction method employed to stratify data by their variance. In other words, points that are more closely together on a PCA are more similar to each other, while points that are more dissimilar to each other will be further apart. 
+
+```r
+# edgeR logCPM for visualization
+logCPM <- cpm(y, log = TRUE, prior.count = 2)
+
+# PCA
+pca <- prcomp(t(logCPM), scale. = FALSE)
+```
+
+To visualize the PCA we have to create a new dataframe:
+
+```r
+# Percentage of variance explained
+percent_var <- round(
+  100 * (pca$sdev^2 / sum(pca$sdev^2)),
+  1
+)
+
+pca_df <- data.frame(
+  PC1 = pca$x[,1],
+  PC2 = pca$x[,2],
+  timepoint = group,
+  sample = colnames(logCPM)
+)
+
+pca_df <- data.frame(
+  PC1 = pca$x[, 1],
+  PC2 = pca$x[, 2],
+  timepoint = group,
+  sample = colnames(logCPM)
+)
+```
+
+We can visualize this using a scatter plot:
+
+```r
+p_pca <- ggplot(
+  pca_df,
+  aes(PC1, PC2, color = timepoint)
 ) +
-  NoLegend()
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot08.png" width="700">
-</div>
-
-<p align="center">
-<em>Figure 12. Heatmap of top 5 markers across clusters. Do you recognize any of them from our previous images? </em>
-</p>
-
-</details>
-
-## Explore known markers all at the same time
-
-```r
-# And use the canonical markers
-canonical_markers <- list(
-  "T cells" = c("CD3D", "IL7R"),
-  "NK cells" = c("NKG7", "GNLY"),
-  "B cells" = c("MS4A1", "CD79A"),
-  "Monocytes" = c("LYZ"),
-  "Dendritic cells" = c("FCER1A", "LILRA4"),
-  "Plasma cells" = c("JCHAIN")
-)
-
-DotPlot(
-  pbmc,
-  features = canonical_markers
-) +
-  RotatedAxis()
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot09.png" width="700">
-</div>
-
-<p align="center">
-<em>Figure 13. Dotplot of selected markers across clusters. Dot size represents percentage of cells from a given cluster that express the gene </em>
-</p>
-
-</details>
-
-Given the markers, we can make a best guest on the cell types:
-
-```r
-0,2,8,11 → Monocytes, or maybe more than one type ofmonocytes?
-6,7,14 → B cells
-5,9,10 → NK cells
-12 → Dendritic cells / pDC-like
-1,3,4 → T cells
-```
-
-To annotate our cells, we add a column to the meta.data
-
-```r
-cluster_annotations <- c(
-  "0"  = "Monocytes",
-  "1"  = "T cells",
-  "2"  = "Monocytes",
-  "3"  = "T cells",
-  "4"  = "T cells",
-  "5"  = "NK cells",
-  "6"  = "B cells",
-  "7"  = "B cells",
-  "8"  = "Monocytes",
-  "9"  = "NK cells",
-  "10" = "NK cells",
-  "11" = "Monocytes",
-  "12" = "Dendritic cells",
-  "13" = "Monocytes",
-  "14" = "B cells"
-)
-
-pbmc_$celltype_manual <- unname(
-  cluster_annotations[
-    as.character(Idents(pbmc))
-  ]
-)
-
-```
-
-And now we inspect the annotated UMAP
-
-```r
-DimPlot(
-  pbmc,
-  reduction = "umap",
-  group.by = "celltype_manual",
-  label = TRUE,
-  repel = TRUE
-)
-```
-
-<details>
-  <summary>Click to reveal figure</summary>
-  
-<div align="center">
-<img src="/genomics-course-usp2026/assets/images/scrna/Rplot11.png" width="500">
-</div>
-
-<p align="center">
-<em>Figure 14. UMAP of Annotated clusters </em>
-</p>
-
-</details>
-
-Would you be satisfied with this annotation? How could you improve it?
-
-Finally, save our annotated object:
-
-```r
-saveRDS(
-  pbmc,
-  file.path(
-    OUTDIR,
-    "pbmc_annotated.rds"
+  geom_point(size = 4) +
+  geom_text_repel(aes(label = sample), size = 3) +
+  theme_classic(base_size = 14) +
+  labs(
+    x = paste0("PC1 (", percent_var[1], "%)"),
+    y = paste0("PC2 (", percent_var[2], "%)"),
+    color = "Time point"
   )
+
+p_pca
+
+ggsave(
+  file.path(OUTDIR, "PCA_edgeR.pdf"),
+  p_pca,
+  width = 6,
+  height = 5
 )
 ```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot01.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 2. Dimension plot of the first 2 PCs </em>
+</p>
+
+</details>
+
+## Differential expression model
+
+```r
+# The design matrix describes the experiment:
+# expression ~ timepoint
+design <- model.matrix(~ group)
+
+# Estimate biological variability between replicates.
+y <- estimateDisp(y, design)
+
+# Fit the model.
+fit <- glmQLFit(y, design)
+```
+
+Biological replicates are never identical. edgeR estimates gene-specific variability using dispersion parameters. Dispersion reflects the amount of variation observed between replicates. Genes with higher dispersion show greater biological variability.
+
+Next, edgeR fits a generalized linear model (GLM) to every gene. This model estimates how gene expression changes across the different time points.
+
+## Test for Differential Expression
+
+To identify genes that change during differentiation, we perform a quasi-likelihood F-test.
+
+```r
+# coef = 2:3 tests whether D3 or D6 differs from D0.
+# This identifies genes that change across the time course.
+qlf_time <- glmQLFTest(
+  fit,
+  coef = 2:3
+)
+```
+
+This test asks:
+
+> Does this gene show a significant change in expression at any point during differentiation?
+
+Unlike a pairwise comparison, this test evaluates the entire trajectory:
+
+```text
+D0 → D3 → D6
+```
+
+Genes significant in this analysis are considered dynamically regulated during osteoblast differentiation.
+
+## Extract Results
+
+Finally, we retrieve all genes ranked by statistical significance.
+
+```r
+edgeR_all <- topTags(
+  qlf_time,
+  n = Inf
+)$table |>
+  rownames_to_column("gene_id")
+```
+
+The resulting table contains:
+
+| Column | Description                        |
+| ------ | ---------------------------------- |
+| logFC  | Estimated fold change              |
+| logCPM | Average expression level           |
+| F      | Test statistic                     |
+| PValue | Raw p-value                        |
+| FDR    | Multiple-testing corrected p-value |
+
+Genes with low FDR values are strong candidates for involvement in the differentiation process.
+
+At this stage, investigate the table. Do you know any of those genes? Probably not, because we are using gene id up until this point. To make the upcoming analysis more interpretable for a human, let's rename the gene id to gene name using an auxiliary file:
+
+```r
+# Load gene annotation
+gene_annot <- read.delim(
+  GENE_ANNOT_FILE,
+  header = FALSE,
+  col.names = c("gene_id", "gene_name", "gene_biotype")
+)
+
+gene_annot <- gene_annot |>
+  mutate(
+    gene_category = ifelse(
+      gene_biotype == "protein_coding",
+      "Coding",
+      "Non-coding"
+    )
+  )
+  
+#rename gene id to gene name
+edgeR_all <- topTags(qlf_time, n = Inf)$table |>
+  rownames_to_column("gene_id") |>
+  left_join(gene_annot, by = "gene_id") |>
+  mutate(
+    gene_label = ifelse(is.na(gene_name), gene_id, gene_name),
+    comparison = "All_timepoints",
+    result = ifelse(FDR < 0.05, "Dynamic", "Not significant")
+  )
+
+write.csv(
+  edgeR_all,
+  file.path(OUTDIR, "edgeR_all_timepoints_annotated.csv"),
+  row.names = FALSE
+)
+```
+
+## Pairwise Comparisons
+
+After identifying genes that change across the entire time course, we can perform specific pairwise comparisons.
+
+```r
+contrast_matrix <- makeContrasts(
+  D3_vs_D0 = groupD3,
+  D6_vs_D0 = groupD6,
+  D6_vs_D3 = groupD6 - groupD3,
+  levels = design
+)
+```
+
+These contrasts allow us to ask more specific biological questions:
+
+* Which genes change early during differentiation? (**D3 vs D0**)
+* Which genes change late during differentiation? (**D6 vs D0**)
+* Which genes continue changing between D3 and D6? (**D6 vs D3**)
+
+To save the differentially expressed genes of each pairwise comparison, we can loop our contrast matrix and save the csv for future analysis.
+
+```r
+pairwise_results <- list()
+
+for (contrast_name in colnames(contrast_matrix)) {
+  
+  qlf <- glmQLFTest(
+    fit,
+    contrast = contrast_matrix[, contrast_name]
+  )
+  
+  result <- topTags(qlf, n = Inf)$table |>
+    rownames_to_column("gene_id") |>
+    left_join(gene_annot, by = "gene_id") |>
+    mutate(
+      gene_label = ifelse(is.na(gene_name), gene_id, gene_name),
+      comparison = contrast_name,
+      regulation = case_when(
+        FDR < 0.05 & logFC > 1 ~ "Up",
+        FDR < 0.05 & logFC < -1 ~ "Down",
+        TRUE ~ "Not significant"
+      )
+    )
+  
+  pairwise_results[[contrast_name]] <- result
+  
+  write.csv(
+    result,
+    file.path(OUTDIR, paste0("edgeR_", contrast_name, "_annotated.csv")),
+    row.names = FALSE
+  )
+}
+
+pairwise_all <- bind_rows(pairwise_results)
+```
+
+## Explore results through visualization
+
+Let's extract some numbers: how many genes are up or down regulated in each pair-wise comparison? What type of genes are they?
+
+```r
+deg_counts <- pairwise_all |>
+  filter(regulation %in% c("Up", "Down")) |>
+  count(comparison, regulation, gene_category)
+
+ggplot(
+  deg_counts,
+  aes(x = comparison, y = n, fill = regulation)
+) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ gene_category) +
+  theme_classic(base_size = 14) +
+  labs(
+    x = "Comparison",
+    y = "Number of differentially expressed genes",
+    fill = "Regulation"
+  )
+  
+  ggsave(
+  file.path(OUTDIR, "DEG_counts_barplot.pdf"),
+  p_bar,
+  width = 8,
+  height = 5
+)
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot02.png" width="700">
+</div>
+
+<p align="center">
+<em>Figure 3. Number of differentially expressed gene by gene type. </em>
+</p>
+
+</details>
+
+One common way to visualize differentially expressed genes is using a type of scatterplot called volcano plot: where the x axis is the log fold change (negative and positive) and the y axis is the FDR value: the highest, the more you can trust the log fold change value. 
+
+```r
+for (contrast_name in names(pairwise_results)) {
+  
+  result <- pairwise_results[[contrast_name]]
+  
+  p_volcano <- ggplot(
+    result,
+    aes(x = logFC, y = -log10(FDR), color = regulation)
+  ) +
+    geom_point(alpha = 0.6, size = 1.2) +
+    geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
+    geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+    theme_classic(base_size = 14) +
+    labs(
+      title = contrast_name,
+      x = "log2 fold change",
+      y = "-log10(FDR)",
+      color = "Regulation"
+    )
+  
+  print(p_volcano)
+  
+  ggsave(
+    file.path(OUTDIR, paste0("volcano_", contrast_name, ".pdf")),
+    p_volcano,
+    width = 6,
+    height = 5
+  )
+}
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot03.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 4. Volcano plot of Day 3 vs Day 0. </em>
+</p>
+
+</details>
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot04.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 5. Volcano plot of Day 6 vs Day 0.  </em>
+</p>
+
+</details>
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot05.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 6. Volcano plot of Day 6 vs Day3. </em>
+</p>
+
+</details>
+
+Cool! We get to see all genes at once using the volcano plot. This is a good sanity check for your analysis, but is still very hard to make a lot of biological interpretation. We saw that we have more than  2000 genes either up or down regulated in each pairwise comparison. One way to extract biological meaning is looking at a slice of our data. Here we are choosing the top 50 most significantly differentially expressed gene in any pairwise comparison. 
+
+```r
+top_genes <- edgeR_all |>
+  filter(!is.na(FDR)) |>
+  arrange(FDR) |>
+  slice_head(n = 50) |>
+  pull(gene_id)
+```
+
+Now, let's build our gene matriz and calculate the z-score. with this we can plot a heatmap and see how are genes are behaving in the time points.
+
+```r
+# Center each gene around its average expression.
+# This makes patterns across samples easier to see.
+mat <- logCPM[top_genes, ]
+
+mat <- mat - rowMeans(mat)
+
+gene_labels <- edgeR_all |>
+  filter(gene_id %in% top_genes) |>
+  arrange(match(gene_id, top_genes)) |>
+  pull(gene_label)
+
+rownames(mat) <- make.unique(gene_labels)
+
+plot_heat <- pheatmap(
+  mat,
+  annotation_col = sample_info[, "timepoint", drop = FALSE],
+  show_rownames = TRUE,
+  fontsize_row = 6
+)
+
+plot_heat
+
+pdf(
+  file.path(OUTDIR, "top50_dynamic_genes_heatmap.pdf"),
+  width = 7,
+  height = 9
+)
+
+print(plot_heat)
+
+dev.off()
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot06.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 7. Heatmap of top 50 most significantly differentially expressed gene in any pairwise comparison. </em>
+</p>
+
+</details>
+
+This visualization is very useful, specially if you know your biology. We can see a lot of collagen genes showing up and the Ogn gene peaking at day 6. However, if you know nothing about this cell line, you probably saw the gene list and though: how is this any different from having the gene id? I still can't interpret it!
+
+Another very useful analysis is a Gene Ontology enrichment of a list of genes. Since we want to know more about our 50 genes, we will focus on them.
+
+```r
+# This analysis asks:
+# What biological processes are enriched among the top dynamic genes?
+
+library(clusterProfiler)
+library(org.Mm.eg.db)
+
+top_genes_clean <- sub("\\..*", "", top_genes)
+
+# Convert Ensembl gene IDs to Entrez IDs.
+# clusterProfiler uses Entrez IDs for GO enrichment.
+gene_conversion <- bitr(
+  top_genes_clean,
+  fromType = "ENSEMBL",
+  toType = c("ENTREZID", "SYMBOL"),
+  OrgDb = org.Mm.eg.db
+)
+
+# Run GO enrichment for Biological Process.
+go_results <- enrichGO(
+  gene = gene_conversion$ENTREZID,
+  OrgDb = org.Mm.eg.db,
+  keyType = "ENTREZID",
+  ont = "BP",
+  pAdjustMethod = "BH",
+  pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05,
+  readable = TRUE
+)
+
+# Save full GO table.
+write.csv(
+  as.data.frame(go_results),
+  file.path(OUTDIR, "GO_top50_dynamic_genes.csv"),
+  row.names = FALSE
+)
+```
+
+We can also plot this result in a dotplot of GO terms (very nice for publications)
+
+```r
+# Dotplot of enriched GO terms.
+p_go <- dotplot(
+  go_results,
+  showCategory = 15
+) +
+  ggtitle("GO enrichment: top dynamic genes")
+
+p_go
+
+ggsave(
+  file.path(OUTDIR, "GO_top50_dynamic_genes_dotplot.pdf"),
+  p_go,
+  width = 8,
+  height = 6
+)
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/rna/Rplot07.png" width="500">
+</div>
+
+<p align="center">
+<em>Figure 7. GO terms of our top 50 differentially expressed genes. </em>
+</p>
+
+</details>
 
 # The End
 
-I know you would like to keep analyzing this single cell data to it's fullest and discover all the subclasses of the known cell types and publish your very own Nature paper. But fear not! Though this class has come to an end, I'll leave resources in the  [References](./references)  tab to go even deeper and wilder in your analysis:
-- what happens when I have a healthy and a disease sample?
-- what about control versus treatment?
-- what if I have different stages of the same tissue or disease?
+I hope this give you a nice base to think about your own analysis: we worked with a real dataset that has an experiment design of 3 time points.  As you can see, after doing a differential expression analysis we can ask a lot of questions, so I would encourage you to explore them on your own:
+- What genes go down regulated from day 0 to day 6 in a sustained fashion? What about up regulated? 
+- Is there a subset of genes that loose expression on day 3 but regain it on day 6? What about the other way around?
+- What if I selected the top 50 genes with the greatest logFC value? Would my GO change? Why? And can I trust that?
+- How can I use this analysis to generate further hypothesis for my research?
 
-There's also many public datasets available and you can use them to explore your own hypothesis and integrate them into your project.
-
+Please go to the  [References](./references)  tab for more resources!
