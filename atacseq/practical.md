@@ -180,14 +180,62 @@ Notice how for both PCA and MA plots we are specifying the method as DBA_EDGER_B
 
 ```r
 dba.plotPCA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK) #looks good, the majority of the variance is explained by the treatment (i.e., difference between control and treatment)
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_atacseq_pca.png" width="500">
+</div>
+
+</details>
+
+```r
 dba.plotPCA(OBJECT_OSTEO, attributes = DBA_ID, method = DBA_EDGER_BLOCK)
+```
 
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_atacseq_pca_replicate.png" width="500">
+</div>
+
+</details>
+
+```r
 dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 1) #symmetric MA plot with well supported peaks
+```
  
-dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 2)
+ <details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_day0_v_day3_maplot.png" width="500">
+</div>
 
+</details>
+
+
+ ```r
+dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 2)
+```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_day0_v_day6_maplot.png" width="500">
+</div>
+
+</details>
+
+```r
 dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 1, bXY = T)
+ ```
  
+ ```r
 dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 2, bXY = T)
 ```
 
@@ -253,9 +301,18 @@ day3_volcano = ggplot() +
        y = "-log10(FDR)")
 
 day3_volcano
+```
 
-####
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_day0_v_day3_volcano.png" width="500">
+</div>
 
+</details>
+
+```r
 day6_volcano = ggplot() + 
   geom_point(data = dplyr::select(report_osteo_day6, Chr, Start, End, Conc, Fold, FDR), 
              aes(x=Fold, y=-log10(FDR)), 
@@ -279,6 +336,15 @@ day6_volcano = ggplot() +
 
 day6_volcano
 ```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_day0_v_day6_volcano.png" width="500">
+</div>
+
+</details>
 
 Let's say I am interested in knowing about the genes that are associated with the differentially accessible peaks in my dataset. To do this I will perform a peak-to-gene proximity analysis. This type of analysis may have several names in the literature, however, the principle is the same. We basically assign a gene to a peak based on proximity. In other words if peak A is closest to gene X then peak A will be annotated as being associated with gene X. There are several softwares and R packages that do this kind of analysis. In our case we will use ChIPSeeker.
 
@@ -376,6 +442,15 @@ ggplot(day6_enriched_peaks.go.df, mapping = aes(x=log(FoldEnrichment, base = 2),
 #dark purple = CC
 #blue = MF
 ```
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/atac/usp_day6_enriched_goplot_ggplot_exercise_example.png" width="500">
+</div>
+
+</details>
 
 Often times it is appropriate to scale our bigwigs based on the normalization factors that are used in our differential accessibility analysis. This way we ensure that the bigwigs we observe have the same normalization as our differential analysis and we can confidently use them to generate plots where comparing the signal matters (such as tornado plots that we will see in the CUT&RUN analysis).
 
