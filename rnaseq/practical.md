@@ -536,7 +536,7 @@ for (contrast_name in names(pairwise_results)) {
 
 </details>
 
-Cool! We get to see all genes at once using the volcano plot. This is a good sanity check for your analysis, but is still very hard to make a lot of biological interpretation. We saw that we have more than  2000 genes either up or down regulated in each pairwise comparison. One way to extract biological meaning is looking at a slice of our data. Here we are choosing the top 50 most significantly differentially expressed gene in any pairwise comparison. 
+Cool! We get to see all genes at once using the volcano plot. This is a good sanity check for your analysis, but is still very hard to assess a biological interpretation. We saw that we have more than  2000 genes either up or down regulated in each pairwise comparison. One way to extract biological meaning is looking at a slice of our data. Here we are choosing the top 50 most significantly differentially expressed gene in any pairwise comparison. 
 
 ```r
 top_genes <- edgeR_all |>
@@ -546,7 +546,7 @@ top_genes <- edgeR_all |>
   pull(gene_id)
 ```
 
-Now, let's build our gene matriz and calculate the z-score. with this we can plot a heatmap and see how are genes are behaving in the time points.
+Now, let's build our gene matriz and calculate the z-score. With this we can plot a heatmap and see how genes are behaving across the time points.
 
 ```r
 # Center each gene around its average expression.
@@ -597,7 +597,7 @@ dev.off()
 
 This visualization is very useful, specially if you know your biology. We can see a lot of collagen genes showing up and the Ogn gene peaking at day 6. However, if you know nothing about this cell line, you probably saw the gene list and though: how is this any different from having the gene id? I still can't interpret it!
 
-Another very useful analysis is a Gene Ontology enrichment of a list of genes. Since we want to know more about our 50 genes, we will focus on them.
+Another very useful analysis is a Gene Ontology enrichment of genes. Since we want to know more about our 50 genes, we will focus on them.
 
 ```r
 # This analysis asks:
