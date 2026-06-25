@@ -40,57 +40,57 @@ The practical modules include:
 
 ## Day 2 | 29 Jun 2026
 
-| Time | Type | Activity |
+| Time | Type | Location |Activity | 
 |------|------|----------|
-| 09:00–10:30 | Lecture | **Lecture 01:** An Introduction to Gene Regulation (MSC) |
-| 11:00–12:00 | Lecture | **Lecture 02:** Analysis of Gene Expression and Gene Targeting (APA) |
+| 09:00–10:30 | Lecture | Queijinho A5 | **Lecture 01:** An Introduction to Gene Regulation (MSC) |
+| 11:00–12:00 | Lecture | Queijinho A5 | **Lecture 02:** Analysis of Gene Expression and Gene Targeting (APA) |
 | 14:00–17:00 | Event | Brazil World Cup Match - No classes |
 
 ---
 
 ## Day 3 | 30 Jun 2026
 
-| Time | Type | Activity |
+| Time | Type | Location | Activity |
 |------|------|----------|
-| 09:00–10:30 | Lecture | **Lecture 03:** Gene Regulatory Networks (MSC) |
-| 11:00–12:00 | Lecture | **Lecture 04:** ATAC-seq and CUT&RUN (APA) |
-| 13:30–14:15 | Science Talk | *Metabolism and Gene Regulation* (Fjodor Merkuri) |
-| 14:30–16:30 | Bootcamp | RNA-seq Data Analysis (Helena Conceição) |
-| 16:30–18:00 | Project | Project Development |
+| 09:00–10:30 | Lecture | Queijinho A5 | **Lecture 03:** Gene Regulatory Networks (MSC) |
+| 11:00–12:00 | Lecture | Queijinho A5 | **Lecture 04:** ATAC-seq and CUT&RUN (APA) |
+| 13:30–14:15 | Science Talk | Multimedia Room (B1) | *Metabolism and Gene Regulation* (Fjodor Merkuri) |
+| 14:30–16:30 | Bootcamp | Multimedia Room (B1) | RNA-seq Data Analysis (Helena Conceição) |
+| 16:30–18:00 | Project | Multimedia Room (B1) | Project Development |
 
 ---
 
 ## Day 4 | 01 Jul 2026
 
-| Time | Type | Activity |
+| Time | Type | Location | Activity |
 |------|------|----------|
-| 09:00–10:30 | Lecture | **Lecture 05:** The Transcriptional Machinery (MSC) |
-| 11:00–12:00 | Lecture | **Lecture 06:** Enhancer Analysis and Single-Cell Genomics (APA) |
-| 13:30–14:15 | Science Talk | *GRN Inference from Single-Cell Multiomics* (Helena Conceição) |
-| 14:30–16:30 | Bootcamp | ATAC-seq & CUT&RUN Data Analysis (Fjodor Merkuri) |
-| 16:30–18:00 | Project | Project Development |
+| 09:00–10:30 | Lecture | Queijinho A5 | **Lecture 05:** The Transcriptional Machinery (MSC) |
+| 11:00–12:00 | Lecture | Queijinho A5 | **Lecture 06:** Enhancer Analysis and Single-Cell Genomics (APA) |
+| 13:30–14:15 | Science Talk | Multimedia Room (B1) | *GRN Inference from Single-Cell Multiomics* (Helena Conceição) |
+| 14:30–16:30 | Bootcamp | Multimedia Room (B1) | ATAC-seq & CUT&RUN Data Analysis (Fjodor Merkuri) |
+| 16:30–18:00 | Project | Multimedia Room (B1) | Project Development |
 
 ---
 
 ## Day 5 | 02 Jul 2026
 
-| Time | Type | Activity |
+| Time | Type | Location | Activity |
 |------|------|----------|
-| 09:00–10:30 | Lecture | **Lecture 07:** Genome Architecture and Function (MSC) |
-| 11:00–12:00 | Lecture | **Lecture 08:** Chromatin Organization (APA) |
-| 13:30–14:15 | Science Talk | *Spatial Patterning of the Epigenome* (APA) |
-| 14:30–16:30 | Bootcamp | Single-Cell RNA-seq Data Analysis (Helena Conceição) |
-| 16:30–18:00 | Project | Project Development |
+| 09:00–10:30 | Lecture | Queijinho A5 | **Lecture 07:** Genome Architecture and Function (MSC) |
+| 11:00–12:00 | Lecture | Queijinho A5 | **Lecture 08:** Chromatin Organization (APA) |
+| 13:30–14:15 | Science Talk | Multimedia Room (B1) | *Spatial Patterning of the Epigenome* (APA) |
+| 14:30–16:30 | Bootcamp | Multimedia Room (B1) | Single-Cell RNA-seq Data Analysis (Helena Conceição) |
+| 16:30–18:00 | Project | Multimedia Room (B1) | Project Development |
 
 ---
 
 ## Day 6 | 03 Jul 2026
 
-| Time | Type | Activity |
+| Time | Type | Location | Activity |
 |------|------|----------|
-| 09:00–10:00 | Science Talk | *Cis-Regulatory Control of Neural Crest Development* (MSC) |
-| 10:00–12:00 | Presentations | Student Project Presentations |
-| 14:00–17:00 | Presentations | Student Project Presentations and Final Discussion |
+| 09:00–10:00 | Science Talk | Anfiteatro 668 | *Cis-Regulatory Control of Neural Crest Development* (MSC) |
+| 10:00–12:00 | Presentations | Anfiteatro 668 | Student Project Presentations |
+| 14:00–17:00 | Presentations | Anfiteatro 668 | Student Project Presentations and Final Discussion |
 
 ---
 
