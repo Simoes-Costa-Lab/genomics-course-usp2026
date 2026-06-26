@@ -16,7 +16,7 @@ This page gathers recommended datasets, tutorials, software documentation, and a
 
 # Scripts for this Module
 
-[CUT&RUN markdown](/genomics-course-usp2026/assets/scripts/usp_course_cutrun.Rmd)
+[CUT&RUN markdown](/genomics-course-usp2026/assets/scripts/usp_course_cutrun.zip)
 
 ---
 
