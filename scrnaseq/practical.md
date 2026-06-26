@@ -71,7 +71,7 @@ library(dplyr)
 
 ```r
 # Set path. It's useful to do it at the beginning, so you don't have to rewrite file paths again and again
-DATA_DIR <- "/course/shared/scrnaseq/data/raw"
+DATA_DIR <- "/home/course/scrnaseq/data/raw"
 
 H5_FILE <- file.path(
   DATA_DIR,

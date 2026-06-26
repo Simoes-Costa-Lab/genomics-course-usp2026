@@ -4,7 +4,7 @@ parent: CUT&RUN
 nav_order: 2
 ---
 
-#Pratical Session
+# Pratical Session
 
 In this section we will walk through the initial analysis of CUT&RUN data and perform an integration of the CUT&RUN and ATAC-seq datasets. This will allow you to compare the two types of data together.
 
@@ -19,7 +19,15 @@ As mentioned in the differential accessibility script, the narrowPeak files cont
 The first thing we will do is obtain the narrowPeak files containing information on the peaks that were called by macs2. Next, we will extract from the narrowPeak files the genomic coordinates of unique peaks for both c-Jun experimental replicates as well as for the IgG control replicate. Most of the commands below are being run directly on the terminal and not within R studio. Take note of the packages and functions that we will use to perform this analysis.
 
 ```bash
-cd /Data/Fjodor/MRE_PROJECT/osteo_diff_functional_cutrun_cjun/usp_course_cutrun #this commands changes the working directory
+mkdir ~/cutrun #create a dir for the outputs
+cd ~/cutrun #this commands changes the working directory
+
+ln -s /home/course/cutrun/pg_o91_con_rep1_cjun_cst.mm39_nodups_peaks.narrowPeak . 
+ln -s /home/course/cutrun/pg_o91_con_rep2_cjun_cst.mm39_nodups_peaks.narrowPeak .
+ln -s /home/course/cutrun/pg_o91_con_rep1_igg.mm39_nodups_peaks.narrowPeak .
+ln -s /home/course/cutrun/HOMER_pg_o91_con_cjun_CONSENSUS .
+ln -s /home/course/cutrun/pg_o91_con_rep1_cjun_cst.mm39_nodups.bam.bw .
+ln -s /home/course/cutrun/pg_o91_con_rep2_cjun_cst.mm39_nodups.bam.bw .
 
 #the command below extracts the genomic coordinates of the unique peaks from the narrowPeak file (chromosome, start, end) and writes them as a bed file
 #a bed file is a file that coantins at least three columns (chromsome, start, end) for any genomic position
@@ -77,13 +85,14 @@ Searching for enriched motifs in the peaksets of transcription factor CUT&RUNs i
 The software we will be using to perform our motif enrichment analysis is called "Hypergeometric Optimization of Motif EnRichment" or HOMER for short (like Homer Simpson). http://homer.ucsd.edu/homer/motif/
 
 ```bash
-findMotifsGenome.pl ./pg_o91_con_cjun_CONSENSUS.bed /Data/Fjodor/MRE_PROJECT/mouse_genome/mm39_genome_helena/mm39.fa ./HOMER_pg_o91_con_cjun_CONSENSUS -size given
+#don't run! 
+#findMotifsGenome.pl ./pg_o91_con_cjun_CONSENSUS.bed /Data/Fjodor/MRE_PROJECT/mouse_genome/mm39_genome_helena/mm39.fa ./HOMER_pg_o91_con_cjun_CONSENSUS -size given
 ```
 
 Let's make a nice plot that displays our motif enrichment data.
 
 ```r
-setwd("/Data/Fjodor/MRE_PROJECT/osteo_diff_functional_cutrun_cjun/usp_course_cutrun")
+setwd("~/cutrun")
 motifs <- read_delim("./HOMER_pg_o91_con_cjun_CONSENSUS/knownResults.txt", delim = "\t", escape_double = FALSE, trim_ws = TRUE)
 
 nrow(motifs)

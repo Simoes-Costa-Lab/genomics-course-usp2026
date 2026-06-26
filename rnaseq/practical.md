@@ -62,7 +62,7 @@ library(ggrepel)
 
 ```r
 # Set path. It's useful to do it at the beginning, so you don't have to rewrite file paths again and again
-DATA_DIR <- "/course/shared/rnaseq/data/"
+DATA_DIR <- "/home/course/rnaseq/data/"
 
 COUNTS_FILE <- file.path(DATA_DIR, "counts/joint_withpairs_featureCounts.txt")
 GENE_ANNOT_FILE <- file.path(DATA_DIR, "geneid2genename.txt")

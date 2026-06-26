@@ -9,26 +9,14 @@ nav_order: 2
 Below we are loading all the packages that we need to perform our differential accessibility analysis. These packages make the analysis simpler because they contain functions that streamline the process and already integrate several steps that we might otherwise have to carry out using base R.
 
 ```r
-library(tidyverse)
 library(DiffBind)
 library(GenomicRanges)
 library(GenomicFeatures)
 library(ChIPseeker)
-library(biomaRt)
-library(ggrepel)
-library(chromVAR)
-library(TFBSTools)
-#library(JASPAR2020)
-library(BSgenome.Mmusculus.UCSC.mm39)
-library(org.Mm.eg.db)
-library(motifmatchr)
 library(clusterProfiler)
-library(pheatmap)
-library(BiocParallel)
-library(edgeR)
-library(RMariaDB)
-library(txdbmaker)
-library(profileplyr)
+library(org.Mm.eg.db)
+library(tidyverse)
+library(ggrepel)
 ```
 
 With the commands below we are initially loading our peak files into R. Peak files contain the genomic coordinates of the ATAC-seq peaks that passed the statistical thresholds we defined when using MACS2. An ATAC-seq peak is essentially a region in the genome that became tagmented by the Tn5 transposase and is thus considered accessible. Over the course of our workshop, in the context of the ATAC-seq analysis, we will use the terms peaks, loci, and accessible genomic regions interchangeably. An accessible genomic region is subject to regulation by transcription factors and other chromatin-associated proteins, therefore, identifying these regions can provide very useful information about gene regulation in a specific cell type.
@@ -41,10 +29,9 @@ Below, we will be comparing the accessibility profiles of cells at three stages 
 Let's think about the biology for a second. When a stem cell differentiates into a specialized cell (such as a bone cell, for example) there are two events that have to take place simultaneously. Th stem cell has to exit its pluripotent stem cell fate and at the same time it has to acquire the fate of the specialized cell. This is why it becomes important to consider the accessibility of the regions in both of the categories described above.
 
 ```r
-setwd("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/")
-setwd("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/")
+setwd("/home/course/atac/") #make sure you also set the working directory on the console
 
-control_1 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_control_1.mm39_nodups_peaks.narrowPeak")
+control_1 = read.table("./Peaks/pg_o91_control_1.mm39_nodups_peaks.narrowPeak")
 control_1 = control_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges() 
 
@@ -52,23 +39,23 @@ control_1 = control_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
 #For the analysis we are performing here, we need the genomic coordinates of our peaks.
 #With the commands above, we are selecting the first three columns of the narrowPeak file as they correspond to the genomic coordinates (chromosome, start, end) and selecting unique peaks in the list.
 
-control_2 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_control_2.mm39_nodups_peaks.narrowPeak")
+control_2 = read.table("./Peaks/pg_o91_control_2.mm39_nodups_peaks.narrowPeak")
 control_2 = control_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
 
-day3_1 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_day3_osteo_1.mm39_nodups_peaks.narrowPeak")
+day3_1 = read.table("./Peaks/pg_o91_day3_osteo_1.mm39_nodups_peaks.narrowPeak")
 day3_1 = day3_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
 
-day3_2 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_day3_osteo_2.mm39_nodups_peaks.narrowPeak")
+day3_2 = read.table("./Peaks/pg_o91_day3_osteo_2.mm39_nodups_peaks.narrowPeak")
 day3_2 = day3_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
 
-day6_1 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_day6_osteo_1.mm39_nodups_peaks.narrowPeak")
+day6_1 = read.table("./Peaks/pg_o91_day6_osteo_1.mm39_nodups_peaks.narrowPeak")
 day6_1 = day6_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
 
-day6_2 = read.table("/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/Peaks/pg_o91_day6_osteo_2.mm39_nodups_peaks.narrowPeak")
+day6_2 = read.table("./Peaks/pg_o91_day6_osteo_2.mm39_nodups_peaks.narrowPeak")
 day6_2 = day6_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
   distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
 ```
@@ -102,32 +89,32 @@ In our case, we have a paired experimental setup. But what does this mean? One w
 OBJECT_OSTEO = dba.peakset(NULL, peaks=control_1, peak.caller="macs",#here we are telling DiffBind which peak caller we used to call the peaks 
                   peak.format= "narrow", sampID="control_1",
                   factor="CONTROL_DAY0", condition="control_day0", replicate=1, #here we are defining the conditions of our sample as well as it's replicate status
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_control_1.mm39_nodups.bam") #here we are providing the path of where the bam file (containing the reads) is located so that diffbind can store this information and go retrieve the file from this location when it is time to count the reads at the ATAC-seq peaks we provided
+                  bamReads="./BAM/pg_o91_control_1.mm39_nodups.bam") #here we are providing the path of where the bam file (containing the reads) is located so that diffbind can store this information and go retrieve the file from this location when it is time to count the reads at the ATAC-seq peaks we provided
 
 OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=control_2, peak.caller="macs", 
                   peak.format= "narrow", sampID="control_2",
                   factor="CONTROL_DAY0", condition="control_day0", replicate=2, 
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_control_2.mm39_nodups.bam")
+                  bamReads="./BAM/pg_o91_control_2.mm39_nodups.bam")
 
 OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day3_1, peak.caller="macs", 
                   peak.format= "narrow", sampID="day3_1",
                   factor="OSTEO_DAY3", condition="osteo_day3", replicate=1,#notice how all the samples prepared on the same week are coded as the same replicate 
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day3_osteo_1.mm39_nodups.bam")
+                  bamReads="./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam")
 
 OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day3_2, peak.caller="macs", 
                   peak.format= "narrow", sampID="day3_2",
                   factor="OSTEO_DAY3", condition="osteo_day3", replicate=2, 
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day3_osteo_2.mm39_nodups.bam")
+                  bamReads="./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam")
 
 OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day6_1, peak.caller="macs", 
                   peak.format= "narrow", sampID="day6_1",
                   factor="OSTEO_DAY6", condition="osteo_day6", replicate=1, 
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day6_osteo_1.mm39_nodups.bam")
+                  bamReads="./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam")
 
 OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day6_2, peak.caller="macs", 
                   peak.format= "narrow", sampID="day6_2",
                   factor="OSTEO_DAY6", condition="osteo_day6", replicate=2, 
-                  bamReads="/Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day6_osteo_2.mm39_nodups.bam")
+                  bamReads="./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam")
 ```
 
 Below we are doing two things. First, we are using the peaksets that we loaded, for each sample, to count the reads from each corresponding BAM file. This is where you have to make a decision about what you want your CONSENSUS peakset to look like. A consensus peakset is a representative peakset for a certain number of samples that contains reproducible peaks that can be found in all or some of the samples. When analyzing replicate samples, it is very important to select peaks that are found in both replicates, however, when you are trying to get a consensus peakset for an experiment involving several sample (such as samples corresponding to different stages or control and treated samples) such as in this case, you may want to be a bit more liberal. This is because you may have peaks that, for example, are present in your control samples and lost upon treatment. In this case, if you defined the consensus peakset as containing peaks that are present in all samples (control and treatment), you may loose the peaks that are lost upon treatment. However, this really depends on you biological question. Maybe in some instances it may be appropriate to get a general consensus peakset between all your samples/replicates or even use a control peakset as your baseline to analyze, for example, how the control peaks are changing upon treatment. **It is important to always have a clear biological question/expectation related to your experiment as this will inform the type of analysis that you will do computationally**
@@ -351,7 +338,7 @@ Let's say I am interested in knowing about the genes that are associated with th
 First, we have to create an annotation object for our genome that contains the coordinates of the genes, their IDs, symbols, and a lot of other annotation information. We need this because it is what we will use to see where the coordinates of our peaks are located. We will use the GTF annotation file associated with our genome (mouse genome mm39) to generate this object. Let's proceed by using the comparison between Day 0 and Day 6 samples as an example.
 
 ```r
-mm39_txdb = makeTxDbFromGFF(file="/Data/GENOMES/MusMusculus/mm39/gencode.vM38.annotation.gtf", format="gtf") #creating annotation object for peak-gene assignment
+mm39_txdb = makeTxDbFromGFF(file="gencode.vM38.annotation.gtf", format="gtf") #creating annotation object for peak-gene assignment
 #we will get some warnings related to the GFF file when creating the TxDb object but we can ignore those as they are not actually errors. You can read more about it in the following post if you like (https://support.bioconductor.org/p/9146617/)
 
 #below we are creating a GRanges object with information for the peaks that are part o the report file for the Day 0 vs Day 6 comparison
@@ -498,28 +485,29 @@ bigwig_scaling_factors
 Below we are using the bamCoverage function to generate bigwigs that have been scaled by our TMM normalization factors.
 
 ```bash
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_control_1.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_control_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3288053 --extendReads
+#this will take a long time, the ready to use bigwigs are here: /home/course/atac/BW
+bamCoverage -b ./BAM/pg_o91_control_1.mm39_nodups.bam -o ~/pg_o91_control_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3288053 --extendReads
 
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_control_2.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_control_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3633250 --extendReads
+bamCoverage -b ./BAM/pg_o91_control_2.mm39_nodups.bam -o ~/pg_o91_control_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3633250 --extendReads
 
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day3_osteo_1.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day3_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3472809 --extendReads
+bamCoverage -b ./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam -o ~/pg_o91_day3_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3472809 --extendReads
 
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day3_osteo_2.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day3_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3194071 --extendReads
+bamCoverage -b ./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam -o ~/pg_o91_day3_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3194071 --extendReads
 
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day6_osteo_1.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day6_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3450896 --extendReads
+bamCoverage -b ./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam -o ~/pg_o91_day6_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3450896 --extendReads
 
-bamCoverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/BAM/pg_o91_day6_osteo_2.mm39_nodups.bam -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day6_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3793226 --extendReads
+bamCoverage -b ./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam -o ~/pg_o91_day6_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3793226 --extendReads
 ```
 
 Below we are averaging the bigwigs for the replicates so we can visualize a representative bigwig for each sample. We will use the bigwigAverage function for this.
 
 ```bash
 #below I am averaging the bigwigs for each replicate
-bigwigAverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_control_1_TMM_SCALE.bw /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_control_2_TMM_SCALE.bw -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_control_TMM_SCALE_AVERAGE.bw
+bigwigAverage -b ./pg_o91_control_1_TMM_SCALE.bw ./pg_o91_control_2_TMM_SCALE.bw -o ~/pg_o91_control_TMM_SCALE_AVERAGE.bw
 
-bigwigAverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day3_osteo_1_TMM_SCALE.bw /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day3_osteo_2_TMM_SCALE.bw -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw
+bigwigAverage -b ./pg_o91_day3_osteo_1_TMM_SCALE.bw ./pg_o91_day3_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw
 
-bigwigAverage -b /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day6_osteo_1_TMM_SCALE.bw /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day6_osteo_2_TMM_SCALE.bw -o /Data/Fjodor/MRE_PROJECT/osteoblast_atac_seq/rerun_with_helena_script/usp_course_atacseq/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw
+bigwigAverage -b ./pg_o91_day6_osteo_1_TMM_SCALE.bw ./pg_o91_day6_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw
 ```
 
 
