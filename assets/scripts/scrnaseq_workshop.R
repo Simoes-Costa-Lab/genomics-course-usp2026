@@ -5,7 +5,7 @@ library(patchwork)
 library(dplyr)
 
 #Set Paths
-DATA_DIR <- "~/course/shared/scrnaseq/data/raw"
+DATA_DIR <- "/home/course/scrnaseq/data/raw"
 
 H5_FILE <- file.path(
   DATA_DIR,
@@ -118,6 +118,15 @@ top10 <- head(VariableFeatures(pbmc), 10)
 top10
 
 LabelPoints(plot = plot1, points = top10, repel = TRUE)
+
+#Save Normalized data
+saveRDS(
+  pbmc,
+  file.path(
+    OUTDIR,
+    "pbmc_normalized.rds"
+  )
+)
 
 #Calculate PCA
 all.genes <- rownames(pbmc)

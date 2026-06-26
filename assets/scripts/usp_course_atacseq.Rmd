@@ -1,0 +1,434 @@
+---
+title: "usp_course_atacseq"
+author: "Fjodor Merkuri"
+date: "2026-06-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Below we are loading all the packages that we need to perform our differential accessibility analysis. These packages make the analysis simpler because they contain functions that streamline the process and already integrate several steps that we might otherwise have to carry out using base R.
+```{r}
+library(DiffBind)
+library(GenomicRanges)
+library(GenomicFeatures)
+library(ChIPseeker)
+library(clusterProfiler)
+library(org.Mm.eg.db)
+library(tidyverse)
+library(ggrepel)
+```
+
+With the commands below we are initially loading our peak files into R. Peak files contain the genomic coordinates of the ATAC-seq peaks that passed the statistical thresholds we defined when using MACS2. An ATAC-seq peak is essentially a region in the genome that became tagmented by the Tn5 transposase and is thus considered accessible. Over the course of our workshop, in the context of the ATAC-seq analysis, we will use the terms peaks, loci, and accessible genomic regions interchangeably. An accessible genomic region is subject to regulation by transcription factors and other chromatin-associated proteins, therefore, identifying these regions can provide very useful information about gene regulation in a specific cell type.
+
+Below, we will be comparing the accessibility profiles of cells at three stages of osteoblast (i.e., bone) differentiation. Specifically, Day 0 (stem cells), Day 3 osteoblasts, and Day 6 osteoblasts. We expect that there will be key genomic loci that will exhibit changes in accessibility. We expect these loci to fall into two categories:
+
+1. loci that will become depleted during differentiation (i.e., genomic regions that will lose accessibility in the stem cells as they commit to an osteoblast fate)
+2. loci that will gain accessibility during differentiation (i.e., genomic regions that will gain accessibility in osteoblast cells as they become specified)
+
+Let's think about the biology for a second. When a stem cell differentiates into a specialized cell (such as a bone cell, for example) there are two events that have to take place simultaneously. Th stem cell has to exit its pluripotent stem cell fate and at the same time it has to acquire the fate of the specialized cell. This is why it becomes important to consider the accessibility of the regions in both of the categories described above.
+
+```{r}
+setwd("/home/course/atac/") #make sure you also set the working directory on the console
+
+control_1 = read.table("./Peaks/pg_o91_control_1.mm39_nodups_peaks.narrowPeak")
+control_1 = control_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges() 
+
+#The narrowPeak file contains several columns of information about our peaks.
+#For the analysis we are performing here, we need the genomic coordinates of our peaks.
+#With the commands above, we are selecting the first three columns of the narrowPeak file as they correspond to the genomic coordinates (chromosome, start, end) and selecting unique peaks in the list.
+
+control_2 = read.table("./Peaks/pg_o91_control_2.mm39_nodups_peaks.narrowPeak")
+control_2 = control_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
+
+day3_1 = read.table("./Peaks/pg_o91_day3_osteo_1.mm39_nodups_peaks.narrowPeak")
+day3_1 = day3_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
+
+day3_2 = read.table("./Peaks/pg_o91_day3_osteo_2.mm39_nodups_peaks.narrowPeak")
+day3_2 = day3_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
+
+day6_1 = read.table("./Peaks/pg_o91_day6_osteo_1.mm39_nodups_peaks.narrowPeak")
+day6_1 = day6_1 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
+
+day6_2 = read.table("./Peaks/pg_o91_day6_osteo_2.mm39_nodups_peaks.narrowPeak")
+day6_2 = day6_2 %>% dplyr::select(Chr=V1, Start=V2, End=V3) %>%
+  distinct(Chr,Start,End,.keep_all=TRUE) %>% GRanges()
+```
+
+In the chunk below we are selecting peaks that are found only on the main chromosomes (chr1-chr19 and the sex chromosomes chrX and chrY). We do not want to include peaks that are found on contigs. Contigs or contiguous sequences are sequences that have not been assembled or added to chromosomes due to technical limitations. The presence of peaks in these regions often confuses various analysis pipelines so we exclude them and only analyze peaks present in the **primary alignment**. 
+
+Note how we are also excluding the mitochondrial genome (chrM) from the list of chromosomes we care about. This is because we are interested primarily in the peaks and regulatory regions that are present in the main chromosomes. remember that mitochondria in the cell have their own small circular genome that is separate from the nuclear genome. Furthermore, a mouse cell contains anywhere from 1,000 - 7,000 copies of the mitochondrial genome. In the past mitochondrial DNA contamination was a well-known issue with ATAC-seq datasets. However, the protocol that we used to generate this ATAC-seq dataset is called the OMNI-ATAC protocol (https://www.nature.com/articles/nmeth.4396). The OMNI-ATAC protocol has several adjustment that ensure better signal-to-noise ratio and a marked reduction in the amount of mitochondrial reads. You can check the paper out to know more about the OMNI-ATAC protocol. One other benefit of this protocol is that it can be performed on very few cells (~500 based on the paper) which is very useful when you work with small samples and tissues.
+```{r}
+chr_list=c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chrX","chrY")
+
+control_1 = control_1[seqnames(control_1) %in% chr_list]
+control_2 = control_2[seqnames(control_2) %in% chr_list]
+day3_1 = day3_1[seqnames(day3_1) %in% chr_list]
+day3_2 = day3_2[seqnames(day3_2) %in% chr_list]
+day6_1 = day6_1[seqnames(day6_1) %in% chr_list]
+day6_2 = day6_2[seqnames(day6_2) %in% chr_list]
+```
+
+In the code chunk below we are creating a DiffBind object (dba object). By "object" we refer to a type of data structure in R that stores information related to a particular analysis (or experiment). The Diffbind object is an S3 object in R. The class of this object as well as the specifics of how it stores information are beyond the scope of this workshop. What you need to know is that the Diffbind object stores information related to our experiment. This means that it stores the details of each sample (such as the condition, treatment, replicate status, etc.), the relationship of the samples/replicates to each other, as well as the peaks and read files that are associated with each sample. Of course, we have to first provide this information to DiffBind so this is where it becomes very important to **think about your experimental setup and make sure that you are coding the relationship between your samples/replicates correctly**.
+
+In our case, we have a paired experimental setup. But what does this mean? One week I went to lab and started the differentiation for my stem cells. By the end of the week I had one sample (or tube) for my control Day 0 (stem cell), one sample for the Day 3 osteoblast cells, and one sample for the Day 6 osteoblast cells. I spun the cells in the tubes down and then I stored them in freezer. This is my first ***experimental replicate**. Two weeks later I did the same differentiation with another vial of the same type of cells. At the end of this week I, again, ended up with three samples (Day 0, Day 3, and , Day 6). When I put these samples in the freezer now I have **two experimental replicates**. Another week went by and I decided that I wanted to run the OMNI-ATAC protocol. So I retrieved both my experimental replicates (for each sample) from the freezer (a total of 6 samples) and performed the OMNI-ATAC protcol.
+
+***QUESTIONS FOR THE CLASS***
+- What do you think are the benefits of waiting until I had both replicates to run the OMNI-ATAC protocol?
+- What would have been the difference if I decided to perform the differentiation for both my replicates (all my six samples) at the same time? Would they still count as experimental replicates? If not, what would we consider them as?
+- Can you think of other instances in your research where you had experimental or biological replicates?
+- What do you think are the benefits of a paired experimental design?
+```{r}
+OBJECT_OSTEO = dba.peakset(NULL, peaks=control_1, peak.caller="macs",#here we are telling DiffBind which peak caller we used to call the peaks 
+                  peak.format= "narrow", sampID="control_1",
+                  factor="CONTROL_DAY0", condition="control_day0", replicate=1, #here we are defining the conditions of our sample as well as it's replicate status
+                  bamReads="./BAM/pg_o91_control_1.mm39_nodups.bam") #here we are providing the path of where the bam file (containing the reads) is located so that diffbind can store this information and go retrieve the file from this location when it is time to count the reads at the ATAC-seq peaks we provided
+
+OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=control_2, peak.caller="macs", 
+                  peak.format= "narrow", sampID="control_2",
+                  factor="CONTROL_DAY0", condition="control_day0", replicate=2, 
+                  bamReads="./BAM/pg_o91_control_2.mm39_nodups.bam")
+
+OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day3_1, peak.caller="macs", 
+                  peak.format= "narrow", sampID="day3_1",
+                  factor="OSTEO_DAY3", condition="osteo_day3", replicate=1,#notice how all the samples prepared on the same week are coded as the same replicate 
+                  bamReads="./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam")
+
+OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day3_2, peak.caller="macs", 
+                  peak.format= "narrow", sampID="day3_2",
+                  factor="OSTEO_DAY3", condition="osteo_day3", replicate=2, 
+                  bamReads="./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam")
+
+OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day6_1, peak.caller="macs", 
+                  peak.format= "narrow", sampID="day6_1",
+                  factor="OSTEO_DAY6", condition="osteo_day6", replicate=1, 
+                  bamReads="./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam")
+
+OBJECT_OSTEO = dba.peakset(OBJECT_OSTEO, peaks=day6_2, peak.caller="macs", 
+                  peak.format= "narrow", sampID="day6_2",
+                  factor="OSTEO_DAY6", condition="osteo_day6", replicate=2, 
+                  bamReads="./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam")
+```
+
+Below we are doing two things. First, we are using the peaksets that we loaded, for each sample, to count the reads from each corresponding BAM file. This is where you have to make a decision about what you want your CONSENSUS peakset to look like. A consensus peakset is a representative peakset for a certain number of samples that contains reproducible peaks that can be found in all or some of the samples. When analyzing replicate samples, it is very important to select peaks that are found in both replicates, however, when you are trying to get a consensus peakset for an experiment involving several sample (such as samples corresponding to different stages or control and treated samples) such as in this case, you may want to be a bit more liberal. This is because you may have peaks that, for example, are present in your control samples and lost upon treatment. In this case, if you defined the consensus peakset as containing peaks that are present in all samples (control and treatment), you may loose the peaks that are lost upon treatment. However, this really depends on you biological question. Maybe in some instances it may be appropriate to get a general consensus peakset between all your samples/replicates or even use a control peakset as your baseline to analyze, for example, how the control peaks are changing upon treatment. **It is important to always have a clear biological question/expectation related to your experiment as this will inform the type of analysis that you will do computationally**
+
+For our purposes we are interested in identifying peaks that, for example, are present in Day 0 but not in Day 3 or Day 6 as they carry important information for our biological question. Similarly, we want peaks that are not present in Day 0 that might emerge in Day 3 and Day 6. This is why, for us, it makes the most sense to get a consensus peakset where each peak is **present in at least two samples/replicates**. We can do this by specifying the "minOverlap" argument as equal to 2. Furthermore, below we are filtering out the peaks that are supported by very few reads. By specifying the "filter" argument as equal to 10, we only retain peaks that are supported by at least 10 reads. This is somewhat similar to the filtration we performed during the RNA-seq analysis.
+```{r}
+OBJECT_OSTEO = dba.count(OBJECT_OSTEO, minOverlap=2, bRemoveDuplicates = FALSE, filter = 10)
+#choosing peaks that are found in at least two samples (including replicates) while also filtering out peaks that are not supported by at least 10  reads
+```
+
+Below, we are applying the TMM normalization (library complexity normalization) to our DiffBind object. Remember, DiffBind ultimately uses the tools and normalization strategies that were initially designed for RNA-seq. This is because once it obtains counts associated with each peak it can *kind of* treat each peak as a gene and calculate the log-fold change between conditions and the associated p-values.
+```{r}
+OBJECT_OSTEO = dba.normalize(OBJECT_OSTEO, method = DBA_EDGER, normalize = DBA_NORM_TMM)
+
+#we can obtain the TMM normalization factors that DiffBind generates and, later on, uses for the differential accessibility analysis with the following command
+OBJECT_OSTEO$norm$edgeR$norm.facs
+#notice how we are retrieving the TMM normalization factors from the DiffBind object
+#all the information that we generate related to the counting, normalization, contrasts, differential analysis, etc. is stored in the DiffBind objkect and can be retrived from there
+```
+
+Below, we are setting up contrasts which is a very important aspect of our analysis and subsequent data retrieval. This is because with the contrasts we tell DiffBind which samples it should be comparing and what the relationship of the replicates is. It is during this step that we define the relationship between samples/replicates that is **important for performing a paired analysis later on**. The "block=DBA_REPLICATE" argument tells DiffBind that, when comparing the samples which we set up using contrasts, it should "block" by replicate. Blocking is a statistical term. We are basically telling it that the **replicates corresponding to each condition are paired**. Remember how I told you earlier that I generated the samples from the first and second experimental replicates on different weeks? This is where that comes into effect.
+```{r}
+OBJECT_OSTEO <- dba.contrast(OBJECT_OSTEO, group1=OBJECT_OSTEO$masks$`control_day0`, group2=OBJECT_OSTEO$masks$osteo_day3, name1="control_day0",name2="osteo_day3", block = DBA_REPLICATE) #the "name" argument here is essentially the condition that we defined earlier when creating the DiffBind object
+
+OBJECT_OSTEO <- dba.contrast(OBJECT_OSTEO, group1=OBJECT_OSTEO$masks$`control_day0`, group2=OBJECT_OSTEO$masks$osteo_day6, name1="control_day0",name2="osteo_day6", block = DBA_REPLICATE)
+```
+
+Below, we are performing the differential accessibility analysis. At this stage, we just have to specify that we want to use the EDGER method for the differential comparison. Ultimately, when we generate the report of our differential accessibility analysis, we will specify that we want to retrieve the paired EDGER analysis that corresponds to the relationships we defined when setting up contrasts.
+```{r}
+OBJECT_OSTEO = dba.analyze(OBJECT_OSTEO, method=DBA_EDGER)
+```
+
+Below we are assessing some QC metrics for our differential analysis dataset. This includes a prinicipal component analysis (PCA) plot and an MA plot. A PCA plot tells us about which aspect that defines our samples explains most of the variance in the dataset that we are analyzing. Ideally, we want most of the variance in the data to be explained by our different conditions or treatment. Lets look at the PCA plot for our differential accessibility analysis of Day 0, Day 3, and Day 6 cells. The majority of the variance in the accessibility profiles of our samples is explained by their differentiation condition. Note how the first principle component (PC1) explains 78% of the variance in the accessibility profiles and separates the samples by the differentiation days.
+
+**QUESTIONS FOR THE CLASS**
+- What can you say about the second principle component (PC2)?
+- How does PC2 differ from PC1?
+- Can you think of any aspects that contribute to the separation of the samples along PC2?
+
+The next plot we will look at is an MA plot. An MA plot is used in genomics to look a the differences between measurements taken in two samples. This is done by plotting the log ratio (M) vs mean average "abundance". The measure of abundance depends on the type of data you are analyzing. For example, in RNA-seq this would be CPM. DiffBind uses a measure of abundance called "Concentration" which is the log of the mean read count (for a particular region) across all samples. An MA plot can reveal a lot of useful information about whether your analysis/normalization approach is leading to balanced data. Furthermore, it gives you an idea about how certain peaks are changing in different conditions.
+
+Notice how for both PCA and MA plots we are specifying the method as DBA_EDGER_BLOCK. 
+
+**QUESTIONS FOR THE CLASS**
+- Can you think of some reasons why chosing DBA_EDGER as the method for the analysis is is particularly important for the MA plots?
+```{r}
+dba.plotPCA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK) #looks good, the majority of the variance is explained by the treatment (i.e., difference between control and treatment)
+dba.plotPCA(OBJECT_OSTEO, attributes = DBA_ID, method = DBA_EDGER_BLOCK)
+
+dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 1) #symmetric MA plot with well supported peaks
+ 
+dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 2)
+
+dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 1, bXY = T)
+ 
+dba.plotMA(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, contrast = 2, bXY = T)
+```
+
+One other important QC metric for ATAC-seq data is the Fragments of Reads in Peaks (FRiP) score. This metric tells us what percent of our sequencing reads map to peaks that were called during our analysis. We can detemrine the FRiP score in two ways:
+
+1- We can count the reads (from each replicate BAM file) that map to the peakset that was called for that replicate.
+2- We can obtain the FRiP scopre from DiffBind which uses the consensus peakset to count the reads for each sample/replicate.
+
+While the FRiP scores derived using the aforementioned approaches may be slightly different they are both acceptable ways to asses the fraction of reads that fall into called peaks in our analysis. For a good ATAC-seq dataset we want the FRiP score to be at least 0.2. You can get the FRiP score from teh DiffBind object by just printing it on the console. navigate to the 6x6 data frame and you should see it there as one of the columns alongside other information.
+```{r}
+OBJECT_OSTEO
+```
+
+Below we are finally getting our report data frame from DiffBind. The report data frame contains the results of our differential accessibility analysis. It is important here to specify the "method" argument as EDGER_BLOCK in order to get the results of the paired analysis. Notice the "contrast" argument and the number that we are specifying.
+```{r}
+report_osteo_day3 = dba.report(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, th = 1, bUsePval = FALSE, bNormalized = TRUE, 
+                     bCalled = TRUE, bCounts = TRUE, 
+                     DataType=DBA_DATA_FRAME, contrast = 1)
+
+report_osteo_day6 = dba.report(OBJECT_OSTEO, method = DBA_EDGER_BLOCK, th = 1, bUsePval = FALSE, bNormalized = TRUE, 
+                     bCalled = TRUE, bCounts = TRUE, 
+                     DataType=DBA_DATA_FRAME, contrast = 2)
+```
+
+let's look a the columns of the report data frame. What do they mean? Use the "?" function for "dba.report" to learn more about each column and the "dba.report" function in general.
+
+**QUESTIONS FOR THE CLASS**
+- What is the difference between a p-value and a p-value that has been corrected for multiple testing (such as the FDR or Bonferroni-corrected p-value)?
+- Why do we rely on multiple testing corrected p-values and not just the traditional p-value in genomics datasets such as this one that perform thousands of tests for each peak or gene?
+- Is the FDR enough for determining biologically significant changes?
+- What other metrics could we also rely on?
+```{r}
+str(report_osteo_day3)
+
+?dba.report
+```
+
+Now that we have the log2(Fold Change) and FDR values associated with each genomic region, we can make some nice volcano plots using ggplot. Do you remember the subset function that was described earlier in the course for base R. Here we are going to use a package called dplyr that makes subsetting and wrangling data frames much easier. To learn more about dplyr make sure you use the "?" function. Type "?dplyr" in the R console.
+```{r}
+day3_volcano = ggplot() + 
+  geom_point(data = dplyr::select(report_osteo_day3, Chr, Start, End, Conc, Fold, FDR), 
+             aes(x=Fold, y=-log10(FDR)), 
+             fill = "#C3C3C3", color = "#C3C3C3", alpha=0.08, size=2.5) +
+  geom_point(data = filter(dplyr::select(report_osteo_day3, Chr, Start, End, Conc, Fold, FDR), Fold >= 1 & FDR <= 0.05),
+             aes(x=Fold, y=-log10(FDR)), color="#8F7DCF", alpha=0.08, size=2.75) +
+  geom_point(data = filter(dplyr::select(report_osteo_day3, Chr, Start, End, Conc, Fold, FDR), Fold <= -1 & FDR <= 0.05), 
+             aes(x=Fold, y=-log10(FDR)), 
+             color = "#8F7DCF", alpha=0.08, size=2.75) +
+  geom_vline(xintercept = 1, linetype="dashed", color = "black", linewidth=0.2) +
+  geom_vline(xintercept = -1, linetype="dashed", color = "black", linewidth=0.2) +
+  theme_classic() +
+  theme(axis.ticks.length=unit(.2, "cm"), 
+        axis.text = element_text(family = "Helvetica", size = 12), 
+        axis.title=element_text(family = "Helvetica", size=14), 
+        legend.position ="none",
+        axis.title.x = element_text(margin = margin(t = 15)),
+        axis.title.y = element_text(margin = margin(r = 15))) +
+  labs(x = "log2FC (PG-O9-1 vs Day3 Osteoblast)",
+       y = "-log10(FDR)")
+
+day3_volcano
+
+####
+
+day6_volcano = ggplot() + 
+  geom_point(data = dplyr::select(report_osteo_day6, Chr, Start, End, Conc, Fold, FDR), 
+             aes(x=Fold, y=-log10(FDR)), 
+             fill = "#C3C3C3", color = "#C3C3C3", alpha=0.08, size=2.5) +
+  geom_point(data = filter(dplyr::select(report_osteo_day6, Chr, Start, End, Conc, Fold, FDR), Fold >= 1 & FDR <= 0.05),
+             aes(x=Fold, y=-log10(FDR)), color="#8F7DCF", alpha=0.08, size=2.75) +
+  geom_point(data = filter(dplyr::select(report_osteo_day6, Chr, Start, End, Conc, Fold, FDR), Fold <= -1 & FDR <= 0.05), 
+             aes(x=Fold, y=-log10(FDR)), 
+             color = "#8F7DCF", alpha=0.08, size=2.75) +
+  geom_vline(xintercept = 1, linetype="dashed", color = "black", linewidth=0.2) +
+  geom_vline(xintercept = -1, linetype="dashed", color = "black", linewidth=0.2) +
+  theme_classic() +
+  theme(axis.ticks.length=unit(.2, "cm"), 
+        axis.text = element_text(family = "Helvetica", size = 12), 
+        axis.title=element_text(family = "Helvetica", size=14), 
+        legend.position ="none",
+        axis.title.x = element_text(margin = margin(t = 15)),
+        axis.title.y = element_text(margin = margin(r = 15))) +
+  labs(x = "log2FC (PG-O9-1 vs Day6 Osteoblast)",
+       y = "-log10(FDR)")
+
+day6_volcano
+```
+
+Let's say I am interested in knowing about the genes that are associated with the differentially accessible peaks in my dataset. To do this I will perform a peak-to-gene proximity analysis. This type of analysis may have several names in the literature, however, the principle is the same. We basically assign a gene to a peak based on proximity. In other words if peak A is closest to gene X then peak A will be annotated as being associated with gene X. There are several softwares and R packages that do this kind of analysis. In our case we will use ChIPSeeker.
+
+First, we have to create an annotation object for our genome that contains the coordinates of the genes, their IDs, symbols, and a lot of other annotation information. We need this because it is what we will use to see where the coordinates of our peaks are located. We will use the GTF annotation file associated with our genome (mouse genome mm39) to generate this object. Let's proceed by using the comparison between Day 0 and Day 6 samples as an example.
+```{r}
+mm39_txdb = makeTxDbFromGFF(file="gencode.vM38.annotation.gtf", format="gtf") #creating annotation object for peak-gene assignment
+#we will get some warnings related to the GFF file when creating the TxDb object but we can ignore those as they are not actually errors. You can read more about it in the following post if you like (https://support.bioconductor.org/p/9146617/)
+
+#below we are creating a GRanges object with information for the peaks that are part o the report file for the Day 0 vs Day 6 comparison
+#ChIPSeeker only accepts GRanges objects to perfro annotation
+report_osteo_day6_peaks.gr = GRanges(dplyr::select(report_osteo_day6, Chr, Start, End))
+
+#below we are performing the annotation
+#notice the TxDb argument and the input for that argument, we are using the annotation object that we created above
+#org.Mm.eg.db is also a genome-wide annotation package for the mouse genome from Bioconductor. it provides mapping between various gene identifiers
+peakAnno_report_osteo_day6_peaks = annotatePeak(report_osteo_day6_peaks.gr, TxDb=mm39_txdb, annoDb="org.Mm.eg.db") #annotating the report peaks
+
+#below we are saviong the ChIPSeeker output as a dataframe so it can be easier for us to look at
+peakAnno_report_osteo_day6_peaks.df = as.data.frame(peakAnno_report_osteo_day6_peaks)
+
+#number of peaks in the annotated data frame is the same as the number of peaks in the original report data frame produced by diffbind
+#this is just a little sanity check
+nrow(peakAnno_report_osteo_day6_peaks.df) == nrow(report_osteo_day6)
+```
+
+Now we have the genes associated with our ATAC-seq peaks and the information about the differential accessibility of these peaks, so we will merge these data frames together to have everything in the same place. We will use dplyr's inner_join function for this purpose. By taking advantage of the fact that each peak in our consensus peakset is unqiue, we merge the two data frames based on their unique combination of values in the Chr, Start, and End columns.
+```{r}
+main_report_osteo_day6 = inner_join(report_osteo_day6, peakAnno_report_osteo_day6_peaks.df, by=c('Chr'='seqnames', 'Start'='start', 'End'='end'))
+```
+
+Let's check how many peaks are significantly enriched or depleted in each of our comparisons but this time we will use a log2(Fold Change) cut-off equal to 1. This means that we will only consider peaks that are significant (i.e., FDR <= 0.05) and differ by at least 2 fold (log2(Fold Change) = 1 means that the (Fold Change) = 2, remember logarithms).
+```{r}
+day6_depleted_peaks = subset(main_report_osteo_day6, Fold >= 1 & FDR <= 0.05)
+nrow(day6_depleted_peaks) #note the nomenclature. These are peaks that are enriched in the control (day 0) condition (logFC>=1) and, therefore, depleted in day 3 osteoblast. The opposite is true for peaks that are depleted in the control (see below)
+#4605 peaks depleted in day6 osteoblasts
+
+day6_enriched_peaks = subset(main_report_osteo_day6, Fold <= -1 & FDR <= 0.05)
+nrow(day6_enriched_peaks)
+#2859 peaks enriched in day6 osteoblasts 
+```
+
+Let's perform Gene Ontology (GO) enrichment analysis on the genes that are associated with peaks that are enriched in Day 6 osteoblasts (compared to Day 0). We will use the clusterProfiler package for this.
+```{r}
+#this command looks a bit intimidating -> gsub("\\.\\d+$", "", unique(na.omit(day6_enriched_peaks$geneId)))
+#all it is doing is getting unique Ensemble gene IDs associated with our enriched peaks and then removing the version identifier
+#the enrichGO function doesn't work well with Ensemble gene IDs that have versions. It takes stable gene IDs
+#we can discuss this more during class but basically we are getting the base geneID so instead of ENSMUSG#######.# we only want ENSMUSG####### (without the ".#" which is the version identifier)
+
+day6_enriched_peaks.go <- enrichGO(gsub("\\.\\d+$", "", unique(na.omit(day6_enriched_peaks$geneId))),
+                                              org.Mm.eg.db, ont = "ALL", keyType = "ENSEMBL", pAdjustMethod = "fdr", pvalueCutoff = 0.05, readable = T)
+
+day6_enriched_peaks.go.df = as.data.frame(day6_enriched_peaks.go)
+dotplot(day6_enriched_peaks.go)
+View(day6_enriched_peaks.go.df)
+```
+
+Let's make a nice plot for the GO term enrichment analysis.
+```{r}
+day6_enriched_peaks.go.df
+plot(-log10(p.adjust) ~ log(FoldEnrichment, base = 2), data = day6_enriched_peaks.go.df)
+
+ggplot(day6_enriched_peaks.go.df, mapping = aes(x=log(FoldEnrichment, base = 2), y=-log10(p.adjust), color = ONTOLOGY)) + 
+  geom_point(size=4, alpha = 0.5) + 
+  theme_classic() + 
+  theme(axis.text.y = element_text(size=18), 
+        axis.text.x = element_text(size=18), 
+        axis.title.x = element_text(size = 20, margin = unit(c(5, 0, 0, 0), "mm")),
+        axis.title.y = element_text(size = 20, margin = unit(c(0, 5, 0, 0), "mm"))) +
+  scale_color_manual(values=c('#C7C7E0','#B989BE', '#1F6DC2')) +
+  theme(axis.ticks.length=unit(.2, "cm"), 
+        axis.text = element_text(family = "Helvetica", size = 14), 
+        axis.title = element_text(family = "Helvetica", size=16),
+        axis.text.x = element_text(colour = "black", margin = margin(t = 10)),
+        axis.text.y = element_text(colour = "black", margin = margin(t = 10)),
+        axis.title.x = element_text(margin = margin(t = 15)),
+        axis.title.y = element_text(margin = margin(r = 15)),
+        legend.position ="none") +
+  labs(y = bquote(-log[10]~"(FDR)"),
+       x = bquote(log[2]~"(Fold Enrichment)")) +
+  geom_text_repel(data = subset(day6_enriched_peaks.go.df, Description == "osteoblast development"),
+                  aes(x=log(FoldEnrichment, base = 2), y=-log10(p.adjust), label = "osteoblast development"), box.padding = 2, color = "black") +
+  geom_text_repel(data = subset(day6_enriched_peaks.go.df, Description == "actin binding"),
+                  aes(x=log(FoldEnrichment, base = 2), y=-log10(p.adjust), label = "actin binding"), box.padding = 4, color = "black") +
+  geom_text_repel(data = subset(day6_enriched_peaks.go.df, Description == "regulation of extracellular matrix disassembly"),
+                  aes(x=log(FoldEnrichment, base = 2), y=-log10(p.adjust), label = "regulation of extracellular matrix disassembly"), box.padding = 6, color = "black") +
+  geom_text_repel(data = subset(day6_enriched_peaks.go.df, Description == "cell-substrate adhesion"),
+                  aes(x=log(FoldEnrichment, base = 2), y=-log10(p.adjust), label = "cell-substrate adhesion"), box.padding = 8, color = "black")
+
+#light purple = BP
+#dark purple = CC
+#blue = MF
+```
+
+Often times it is appropriate to scale our bigwigs based on the normalization factors that are used in our differential accessibility analysis. This way we ensure that the bigwigs we observe have the same normalization as our differential analysis and we can confidently use them to generate plots where comparing the signal matters (such as tornado plots that we will see in the CUT&RUN analysis).
+
+This type of normalization is sometimes referred to as library complexity normalization and becomes very necessary in cases when one of the libraries did not work as well as the others. In this case, for example, the signal in the library that did not work as well might appear lower than that of the other libraries. But how can we ensure that this difference is not actually due to a biological reason and just a technical artifact. Simple sequencing depth normalization approaches such as RPKM or RPGC are not very good at accounting for such compositional differences so we turn to other more sophisticated normalization strategies. 
+
+One approach is to use a spike-in control. The spike-in DNA (usually from a different species) is added in the same amount to all samples/libraries. This way, if there is a technical issue with one of the libraries, this will also be observed in the amount/concentration of the spike-in. We can therefore, use the reads that map to the spike-in to derive scaling factors that we can use for normalization. other approaches rely on mathematical ways to normalize library complexity. You went over one of these approaches (i.e., TMM normalization) during the RNA-seq lecture. In this differential accessibility analysis we have used EdgeR and the TMM approach to normalize the data so we will use these TMM factors to also scale our bigwigs.
+
+N.B. Before using any kind of normalization it is very important to know how that normalization approach works and what it's assumptions, requirements, and limitation are. Always familiarize yourself with the math so you can confidently use the correct approach for normalizing your data! This subject is teh topic of a lot of discussion in the field and we will not be able to cover all the aspects of different kinds of normalization in our workshop. However, I suggest you start by reading this very nice post on BioStars that explains how the TMM normalization can be used to account for compositional differences in ATAC-seq libraries.
+```{r}
+#below we are counting raw reads at the consensus peakset
+OBJECT_OSTEO_rawreads <- dba.count(OBJECT_OSTEO, peaks=NULL, score=DBA_SCORE_READS)
+
+#below we are retrieving the raw reads
+rawread  <- dba.peakset(OBJECT_OSTEO_rawreads, bRetrieve = TRUE, DataType = DBA_DATA_FRAME)
+
+#below we are adding the reads at the peaks to get the reads-in-peaks library sizes and creating a vector to store this information
+rip_lib_sizes = c(sum(rawread$control_1), sum(rawread$control_2), sum(rawread$day3_1), sum(rawread$day3_2), sum(rawread$day6_1), sum(rawread$day6_2))
+
+#below we are creating a vector with the sample names in the same order as the rip_lib_sizes vector
+sample_ids = c("control_1", "control_2", "day3_1", "day3_2", "day6_1", "day6_2")
+
+#below we are retrieving the tmm normalization factors from the DiffBind object
+tmm_norm_factors = OBJECT_OSTEO$norm$edgeR$norm.facs
+tmm_norm_factors
+
+#below we are calculating the effective library size normalization factors
+effective_lib_size_factor = tmm_norm_factors * rip_lib_sizes / 1000000
+effective_lib_size_factor
+
+#we would need to divide the signal from the bams with the effective library size factors that we derived above
+#however, the software that we use to scale the bigwigs can only multiply by the provided scaling factor, so we will need to get the reciprocal of the effective library size factro in order to ensure that we are divividing by this value when scaling the bigwigs
+scaling_factors = 1/effective_lib_size_factor
+bigwig_scaling_factors = data.frame(Sample = sample_ids, `Effective Library Size Scaling` = scaling_factors)
+bigwig_scaling_factors
+
+#control_1	0.3288053			
+#control_2	0.3633250			
+#day3_1	0.3472809			
+#day3_2	0.3194071			
+#day6_1	0.3450896			
+#day6_2	0.3793226	
+```
+
+Below we are using the bamCoverage function to generate bigwigs that have been scaled by our TMM normalization factors.
+```{bash}
+#this will take a long time, the ready to use bigwigs are here: /home/course/atac/BW
+bamCoverage -b ./BAM/pg_o91_control_1.mm39_nodups.bam -o ~/pg_o91_control_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3288053 --extendReads
+
+bamCoverage -b ./BAM/pg_o91_control_2.mm39_nodups.bam -o ~/pg_o91_control_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3633250 --extendReads
+
+bamCoverage -b ./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam -o ~/pg_o91_day3_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3472809 --extendReads
+
+bamCoverage -b ./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam -o ~/pg_o91_day3_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3194071 --extendReads
+
+bamCoverage -b ./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam -o ~/pg_o91_day6_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3450896 --extendReads
+
+bamCoverage -b ./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam -o ~/pg_o91_day6_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3793226 --extendReads
+```
+
+Below we are averaging the bigwigs for the replicates so we can visualize a representative bigwig for each sample. We will use the bigwigAverage function for this.
+```{bash}
+#below I am averaging the bigwigs for each replicate
+bigwigAverage -b ./pg_o91_control_1_TMM_SCALE.bw ./pg_o91_control_2_TMM_SCALE.bw -o ~/pg_o91_control_TMM_SCALE_AVERAGE.bw
+
+bigwigAverage -b ./pg_o91_day3_osteo_1_TMM_SCALE.bw ./pg_o91_day3_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw
+
+bigwigAverage -b ./pg_o91_day6_osteo_1_TMM_SCALE.bw ./pg_o91_day6_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

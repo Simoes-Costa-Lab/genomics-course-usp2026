@@ -26,6 +26,7 @@ The practical exercises use a count matrix generated with featureCounts from ali
 
 # Scripts for this Module
 
+- [RNA Seq script](/genomics-course-usp2026/assets/scripts/rnaseq-analysis.R)
 ---
 
 # Tutorials

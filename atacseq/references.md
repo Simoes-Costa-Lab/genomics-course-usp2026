@@ -12,6 +12,8 @@ This page gathers recommended datasets, tutorials, software documentation, and a
 
 # Scripts for this Module
 
+- [ATAC Seq Markdown](/genomics-course-usp2026/assets/scripts/usp_course_atacseq.Rmd)
+
 ---
 
 # Tutorials

@@ -22,6 +22,8 @@ The practical exercises in this module use the publicly available PBMC dataset g
 
 # Scripts for this module
 
+- [Single cell RNA Seq script](/genomics-course-usp2026/assets/scripts/rnaseq-analysis.R)
+
 ---
 
 # Tutorials
