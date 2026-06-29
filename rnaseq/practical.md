@@ -55,7 +55,6 @@ In this study, the authors characterized the cellular and molecular function of 
 library(edgeR)
 library(tidyverse)
 library(pheatmap)
-library(ggrepel)
 ```
 
 # Step 2 — Set input and output paths
@@ -231,7 +230,6 @@ p_pca <- ggplot(
   aes(PC1, PC2, color = timepoint)
 ) +
   geom_point(size = 4) +
-  geom_text_repel(aes(label = sample), size = 3) +
   theme_classic(base_size = 14) +
   labs(
     x = paste0("PC1 (", percent_var[1], "%)"),
@@ -430,7 +428,7 @@ deg_counts <- pairwise_all |>
   filter(regulation %in% c("Up", "Down")) |>
   count(comparison, regulation, gene_category)
 
-ggplot(
+p_bar <- ggplot(
   deg_counts,
   aes(x = comparison, y = n, fill = regulation)
 ) +
@@ -442,6 +440,8 @@ ggplot(
     y = "Number of differentially expressed genes",
     fill = "Regulation"
   )
+  
+  p_bar
   
   ggsave(
   file.path(OUTDIR, "DEG_counts_barplot.pdf"),
