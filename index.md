@@ -28,6 +28,14 @@ The practical modules include:
 
 ---
 
+# Lectures Slides
+
+The lecture slides can be accessed here:
+
+- [Lecture Slides](./slides)
+
+---
+
 # Schedule
 
 ## Day 1 | 28 Jun 2026
