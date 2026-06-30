@@ -1,5 +1,5 @@
 ---
-title: Pratical Session
+title: Practical Session
 parent: CUT&RUN
 nav_order: 2
 ---

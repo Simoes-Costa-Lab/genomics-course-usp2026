@@ -1,5 +1,5 @@
 ---
-title: Pratical Session
+title: Practical Session
 parent: ATAC-seq
 nav_order: 2
 ---
@@ -445,7 +445,7 @@ This type of normalization is sometimes referred to as library complexity normal
 
 One approach is to use a spike-in control. The spike-in DNA (usually from a different species) is added in the same amount to all samples/libraries. This way, if there is a technical issue with one of the libraries, this will also be observed in the amount/concentration of the spike-in. We can therefore, use the reads that map to the spike-in to derive scaling factors that we can use for normalization. other approaches rely on mathematical ways to normalize library complexity. You went over one of these approaches (i.e., TMM normalization) during the RNA-seq lecture. In this differential accessibility analysis we have used EdgeR and the TMM approach to normalize the data so we will use these TMM factors to also scale our bigwigs.
 
-N.B. Before using any kind of normalization it is very important to know how that normalization approach works and what it's assumptions, requirements, and limitation are. Always familiarize yourself with the math so you can confidently use the correct approach for normalizing your data! This subject is teh topic of a lot of discussion in the field and we will not be able to cover all the aspects of different kinds of normalization in our workshop. However, I suggest you start by reading this very nice post on BioStars that explains how the TMM normalization can be used to account for compositional differences in ATAC-seq libraries.
+N.B. Before using any kind of normalization it is very important to know how that normalization approach works and what it's assumptions, requirements, and limitation are. Always familiarize yourself with the math so you can confidently use the correct approach for normalizing your data! This subject is the topic of a lot of discussion in the field and we will not be able to cover all the aspects of different kinds of normalization in our workshop. However, I suggest you start by reading this very nice post on BioStars that explains how the TMM normalization can be used to account for compositional differences in ATAC-seq libraries: https://www.biostars.org/p/413626/?__cf_chl_f_tk=WmWOv2Go0BTNTs02nNbeB.lE7pUtIBgkDSsLJX0OQN0-1782851179-1.0.1.1-7r_KGZMOTpILGa8Oiy9mraOdhHgkyU8ZmYsYCLVDrLs
 
 ```r
 #below we are counting raw reads at the consensus peakset
