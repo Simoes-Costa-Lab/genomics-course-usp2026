@@ -2,7 +2,7 @@
 title: Concepts and Techniques
 subtitle: "Introduction to R"
 layout: home
-nav_order: 2
+nav_order: 4
 description: "Intensive bioinformatics course covering RNA-seq, ATAC-seq, CUT&RUN, and single-cell genomics."
 ---
 
