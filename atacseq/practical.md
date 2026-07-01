@@ -4,7 +4,7 @@ parent: ATAC-seq
 nav_order: 2
 ---
 
-# Pratical Session
+# Practical Session
 
 Below we are loading all the packages that we need to perform our differential accessibility analysis. These packages make the analysis simpler because they contain functions that streamline the process and already integrate several steps that we might otherwise have to carry out using base R.
 
@@ -486,28 +486,35 @@ Below we are using the bamCoverage function to generate bigwigs that have been s
 
 ```bash
 #this will take a long time, the ready to use bigwigs are here: /home/course/atac/BW
-bamCoverage -b ./BAM/pg_o91_control_1.mm39_nodups.bam -o ~/pg_o91_control_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3288053 --extendReads
+#this will take a long time, the ready to use bigwigs are here: /home/course/atac/BW
+#bamCoverage -b ./BAM/pg_o91_control_1.mm39_nodups.bam -o ~/pg_o91_control_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3288053 --extendReads
 
-bamCoverage -b ./BAM/pg_o91_control_2.mm39_nodups.bam -o ~/pg_o91_control_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3633250 --extendReads
+#bamCoverage -b ./BAM/pg_o91_control_2.mm39_nodups.bam -o ~/pg_o91_control_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3633250 --extendReads
 
-bamCoverage -b ./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam -o ~/pg_o91_day3_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3472809 --extendReads
+#bamCoverage -b ./BAM/pg_o91_day3_osteo_1.mm39_nodups.bam -o ~/pg_o91_day3_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3472809 --extendReads
 
-bamCoverage -b ./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam -o ~/pg_o91_day3_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3194071 --extendReads
+#bamCoverage -b ./BAM/pg_o91_day3_osteo_2.mm39_nodups.bam -o ~/pg_o91_day3_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3194071 --extendReads
 
-bamCoverage -b ./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam -o ~/pg_o91_day6_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3450896 --extendReads
+#bamCoverage -b ./BAM/pg_o91_day6_osteo_1.mm39_nodups.bam -o ~/pg_o91_day6_osteo_1_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3450896 --extendReads
 
-bamCoverage -b ./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam -o ~/pg_o91_day6_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3793226 --extendReads
+#bamCoverage -b ./BAM/pg_o91_day6_osteo_2.mm39_nodups.bam -o ~/pg_o91_day6_osteo_2_TMM_SCALE.bw --outFileFormat bigwig -bs 5 --numberOfProcessors 10 --scaleFactor 0.3793226 --extendReads
 ```
 
 Below we are averaging the bigwigs for the replicates so we can visualize a representative bigwig for each sample. We will use the bigwigAverage function for this.
 
 ```bash
 #below I am averaging the bigwigs for each replicate
-bigwigAverage -b ./pg_o91_control_1_TMM_SCALE.bw ./pg_o91_control_2_TMM_SCALE.bw -o ~/pg_o91_control_TMM_SCALE_AVERAGE.bw
+mkdir ~/atacseq
+ln -s /home/course/atac/BW/pg_o91_control_TMM_SCALE_AVERAGE.bw ~/atacseq
+ln -s /home/course/atac/BW/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw ~/atacseq
+ln -s /home/course/atac/BW/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw ~/atacseq
 
-bigwigAverage -b ./pg_o91_day3_osteo_1_TMM_SCALE.bw ./pg_o91_day3_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw
+#below I am averaging the bigwigs for each replicate
+#bigwigAverage -b ./pg_o91_control_1_TMM_SCALE.bw ./pg_o91_control_2_TMM_SCALE.bw -o ~/pg_o91_control_TMM_SCALE_AVERAGE.bw
 
-bigwigAverage -b ./pg_o91_day6_osteo_1_TMM_SCALE.bw ./pg_o91_day6_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw
+#bigwigAverage -b ./pg_o91_day3_osteo_1_TMM_SCALE.bw ./pg_o91_day3_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw
+
+#bigwigAverage -b ./pg_o91_day6_osteo_1_TMM_SCALE.bw ./pg_o91_day6_osteo_2_TMM_SCALE.bw -o ~/pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw
 ```
 
 
