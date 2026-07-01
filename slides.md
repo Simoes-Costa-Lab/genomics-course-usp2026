@@ -20,7 +20,8 @@ This page gathers slides presented throughout the course.
 
 - [Gene Regulatory Networks (MSC)](/genomics-course-usp2026/assets/slides/Lecture02-PDF.pdf) 
 - [Marcos' Quiz Question](/genomics-course-usp2026/assets/slides/QuizPDF.pdf) 
-- [ATAC-seq and CUT&RUN (APA)] - coming soon 
+- [ATAC-seq and CUT&RUN (APA)](/genomics-course-usp2026/assets/slides/Aula2_AA.pdf) 
+- [Practical Session - RNASeq Workshop (HBC)](/genomics-course-usp2026/assets/slides/RNASeqWorkshop.pdf) 
 - [TMM Normalization](/genomics-course-usp2026/assets/slides/rna_seq_library_norm.pdf) 
 
 ---
