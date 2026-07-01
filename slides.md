@@ -28,14 +28,15 @@ This page gathers slides presented throughout the course.
 
 # Day4
 
-- [The Transcriptional Machinery (MSC)] - coming soon 
-- [Enhancer Analysis and Single-Cell Genomics (APA)] - coming soon 
+- [Genome Architecture and Function (MSC)](/genomics-course-usp2026/assets/slides/Lecture03-PDF.pdf) 
+- [Enhancer Analysis and Single-Cell Genomics (APA)](/genomics-course-usp2026/assets/slides/Aula3_AA.pdf) 
+- [Practical Session - ATACSeq Workshop (FM)](/genomics-course-usp2026/assets/slides/usp_atacseq_cutrun_presentation.pdf) 
 
 ---
 
 # Day5
 
-- [Genome Architecture and Function (MSC)] - coming soon 
+- [The Transcriptional Machinery (MSC)] - coming soon 
 - [Chromatin Organization (APA)] - coming soon 
 
 

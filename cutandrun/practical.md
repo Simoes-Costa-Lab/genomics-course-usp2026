@@ -4,7 +4,7 @@ parent: CUT&RUN
 nav_order: 2
 ---
 
-# Pratical Session
+# Practical Session
 
 In this section we will walk through the initial analysis of CUT&RUN data and perform an integration of the CUT&RUN and ATAC-seq datasets. This will allow you to compare the two types of data together.
 
@@ -127,20 +127,50 @@ ggplot(motifs, mapping = aes(x=rank, y=-log10(`P-value`))) +
                   aes(x=rank, y=-log10(`P-value`), label = "Jun-AP1 (69.29% of Peaks)"), box.padding = 12)
 ```
 
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/cutrun/Rplot01.png" width="500">
+</div>
+
+</details>
+
 Let us also make a representative cJun bigwig by averaging the bigwigs associated with the c-Jun experimental replicates.
 
 ```bash
-bigwigAverage -b ./pg_o91_con_rep1_cjun_cst.mm39_nodups.bam.bw ./pg_o91_con_rep2_cjun_cst.mm39_nodups.bam.bw -o ./pg_o91_con_cjun_AVERAGE.bw
+#bigwigAverage -b ./pg_o91_con_rep1_cjun_cst.mm39_nodups.bam.bw ./pg_o91_con_rep2_cjun_cst.mm39_nodups.bam.bw -o ./pg_o91_con_cjun_AVERAGE.bw
+ln -s /home/course/cutrun/pg_o91_con_cjun_AVERAGE.bw ~/cutrun
 ```
 
 Let us make some tornado and profile plots to explore the relationship between our c-Jun CUT&RUn and ATAC-seq data genome-wide.
 
 ```bash
-computeMatrix reference-point -S ./pg_o91_control_TMM_SCALE_AVERAGE.bw ./pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw ./pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw -R ./pg_o91_con_cjun_CONSENSUS.bed -a 500 -b 500 -bs 20 -o pg_o91_con_cjun_CONSENSUS_ATAC.mat.gz --missingDataAsZero --referencePoint center -p10
+#computeMatrix reference-point -S ./pg_o91_control_TMM_SCALE_AVERAGE.bw ./pg_o91_day3_osteo_TMM_SCALE_AVERAGE.bw ./pg_o91_day6_osteo_TMM_SCALE_AVERAGE.bw -R ./pg_o91_con_cjun_CONSENSUS.bed -a 500 -b 500 -bs 20 -o pg_o91_con_cjun_CONSENSUS_ATAC.mat.gz --missingDataAsZero --referencePoint center -p10
+
+ln -s /home/course/cutrun/pg_o91_con_cjun_CONSENSUS_ATAC.mat.gz ~/cutrun
+
+cd ~/cutrun
 
 plotHeatmap -m pg_o91_con_cjun_CONSENSUS_ATAC.mat.gz -out pg_o91_cjun_peaks_at_timecourse_atac.png --sortUsingSamples 1 --colorMap BuPu --samplesLabel "Day 0 Control" "Day 3 Osteo" "Day 6 Osteo" --whatToShow 'heatmap and colorbar' --plotTitle "ATAC-seq Signal at c-Jun Peaks" --regionsLabel "c-Jun CUT&RUN Peaks" --plotFileFormat png
 
 plotProfile -m pg_o91_con_cjun_CONSENSUS_ATAC.mat.gz --perGroup -out pg_o91_cjun_peaks_at_timecourse_atac_PROFILE.png --samplesLabel "Day 0 Control" "Day 3 Osteo" "Day 6 Osteo" --plotTitle "ATAC-seq Signal at c-Jun Peaks" --regionsLabel "" --plotFileFormat png
 ```
 
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/cutrun/pg_o91_cjun_peaks_at_timecourse_atac.png" width="300">
+</div>
 
+</details>
+
+<details>
+  <summary>Click to reveal figure</summary>
+  
+<div align="center">
+<img src="/genomics-course-usp2026/assets/images/cutrun/pg_o91_cjun_peaks_at_timecourse_atac_PROFILE.png" width="500">
+</div>
+
+</details>

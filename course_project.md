@@ -9,11 +9,18 @@ This page contains the guidelines for the Research Project.
 
 ---
 
+#  Group Research Project Form
+
+Please add your group information to this form:
+
+-[Group Form](https://docs.google.com/forms/d/e/1FAIpQLSeQNLTTQwXItzhitUgCbJrtChKJIx6VrnmzxVx2BsHgCfFsNA/viewform?usp=dialog)
+---
+
 # Overview of Research Projects Structure
 
 ## Research Projects will be presented on Friday (7/3) by 6 groups of 5 students
 
-- Presentations will be 30mins + 10mins of Q&A;
+- Presentations will be 20mins + 10mins of Q&A;
 - Projects will be evaluated as a grant application;
 - Any topic is OK as long as it is centered in genomics and uses techniques discussed in class.
 
