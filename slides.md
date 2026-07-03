@@ -36,8 +36,9 @@ This page gathers slides presented throughout the course.
 
 # Day5
 
-- [The Transcriptional Machinery (MSC)] - coming soon 
-- [Chromatin Organization (APA)] - coming soon 
+- [The Transcriptional Machinery (MSC)](/genomics-course-usp2026/assets/slides/Lecture04-PDF.pdf)  
+- [Chromatin Organization (APA)](/genomics-course-usp2026/assets/slides/Aula4_AA.pdf)  
+- [Practical Session - ScRNASeq Workshop (HBC)](/genomics-course-usp2026/assets/slides/ScRNASeqWorkshop.pdf)  
 
 
 
